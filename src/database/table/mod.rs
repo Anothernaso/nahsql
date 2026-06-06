@@ -7,13 +7,13 @@ use std::path::PathBuf;
 
 const ELEMENT_DIR: &str = "elements";
 
-pub trait DbTable {
+pub trait DbTableImpl {
     fn table_path(&self, table_name: impl AsRef<str>) -> PathBuf;
     fn table_element_dir(&self, table_name: impl AsRef<str>) -> PathBuf;
     fn table_element_path(&self, table_name: impl AsRef<str>, primary_key: ValueKey) -> PathBuf;
 }
 
-impl DbTable for Database {
+impl DbTableImpl for Database {
     /// Gets the filepath of the given table.
     ///
     /// # Notes

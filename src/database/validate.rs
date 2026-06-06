@@ -57,7 +57,7 @@ impl DbValidateImpl for Database {
     /// Returns a `DbError` if anything goes wrong.
     ///
     #[cfg(all(feature = "tokio"))]
-    fn validate_async(&self) -> impl Future<Output = Result<(), DbError>> + Send {
+    fn validate_async(&self) -> impl Future<Output = Result<(), DbError>> {
         use tokio::fs;
 
         async move {

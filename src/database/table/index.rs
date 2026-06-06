@@ -1,5 +1,5 @@
 use crate::{
-    database::{Database, table::DbTable},
+    database::{Database, table::DbTableImpl},
     value::ValueKey,
 };
 use serde::{Deserialize, Serialize};

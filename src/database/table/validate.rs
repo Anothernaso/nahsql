@@ -1,7 +1,7 @@
 use crate::database::{
     Database, DbError,
     table::{
-        DbTable,
+        DbTableImpl,
         index::{DbTableIndex, DbTableIndexImpl},
     },
 };
@@ -79,14 +79,11 @@ impl DbTableValidateImpl for Database {
             // Create the index if it doesn't exist
             if !fs::exists(&index_path).map_err(|e| DbError::IoError(e))? {
                 index = DbTableIndex::new();
-                let index_json =
-                    serde_json::to_string_pretty(&index).map_err(|e| DbError::SerError(e))?;
-
-                fs::write(index_path, index_json).map_err(|e| DbError::IoError(e))?;
             }
             // Read the index if it already exists
             else {
-                let index_json = fs::read_to_string(index_path).map_err(|e| DbError::IoError(e))?;
+                let index_json =
+                    fs::read_to_string(&index_path).map_err(|e| DbError::IoError(e))?;
 
                 index = serde_json::from_str(&index_json).map_err(|e| DbError::SerError(e))?;
             }
@@ -95,6 +92,12 @@ impl DbTableValidateImpl for Database {
             index.elements_mut().retain(|fkey, pkey| {
                 fkey.r#type() == field.r#type() && pkey.r#type() == pkey_field.r#type()
             });
+
+            let index_json =
+                serde_json::to_string_pretty(&index).map_err(|e| DbError::SerError(e))?;
+
+            // Write the updated index back to disk
+            fs::write(index_path, index_json).map_err(|e| DbError::IoError(e))?;
         }
 
         Ok(())
@@ -183,16 +186,10 @@ impl DbTableValidateImpl for Database {
                     .map_err(|e| DbError::IoError(e))?
                 {
                     index = DbTableIndex::new();
-                    let index_json =
-                        serde_json::to_string_pretty(&index).map_err(|e| DbError::SerError(e))?;
-
-                    fs::write(index_path, index_json)
-                        .await
-                        .map_err(|e| DbError::IoError(e))?;
                 }
                 // Read the index if it already exists
                 else {
-                    let index_json = fs::read_to_string(index_path)
+                    let index_json = fs::read_to_string(&index_path)
                         .await
                         .map_err(|e| DbError::IoError(e))?;
 
@@ -203,6 +200,14 @@ impl DbTableValidateImpl for Database {
                 index.elements_mut().retain(|fkey, pkey| {
                     fkey.r#type() == field.r#type() && pkey.r#type() == pkey_field.r#type()
                 });
+
+                let index_json =
+                    serde_json::to_string_pretty(&index).map_err(|e| DbError::SerError(e))?;
+
+                // Write the updated index back to disk
+                fs::write(index_path, index_json)
+                    .await
+                    .map_err(|e| DbError::IoError(e))?;
             }
 
             Ok(())
