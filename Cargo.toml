@@ -1,6 +1,6 @@
 [package]
 name = "nahsql"
-version = "0.4.5"
+version = "0.5.0-dev"
 authors = ["Anatnaso <antondev@kuthy.com>"]
 edition = "2024"
 description = "A database engine without SQL"
