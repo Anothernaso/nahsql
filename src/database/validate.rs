@@ -1,10 +1,10 @@
 use crate::database::{
     Database, DbError,
-    manifest::{DbManifest, ImplDbManifest},
-    table::validate::ImplDbTableValidate,
+    manifest::{DbManifest, DbManifestImpl},
+    table::validate::DbTableValidateImpl,
 };
 
-pub trait ImplDbValidate {
+pub trait DbValidateImpl {
     #[cfg(all(feature = "std"))]
     fn validate_sync(&self) -> Result<(), DbError>;
 
@@ -12,7 +12,7 @@ pub trait ImplDbValidate {
     fn validate_async(&self) -> impl Future<Output = Result<(), DbError>> + Send;
 }
 
-impl ImplDbValidate for Database {
+impl DbValidateImpl for Database {
     /// Makes the database on the filesystem match its schema.
     ///
     /// Returns a `DbError` if anything goes wrong.

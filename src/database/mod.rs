@@ -6,7 +6,7 @@ pub mod validate;
 use crate::schema::Schema;
 use error::DbError;
 use std::path::{Path, PathBuf};
-use validate::ImplDbValidate;
+use validate::DbValidateImpl;
 
 const TABLE_DIR: &str = "tables";
 

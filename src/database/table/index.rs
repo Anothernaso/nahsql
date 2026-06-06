@@ -28,13 +28,13 @@ impl DbTableIndex {
     }
 }
 
-pub trait ImplDbTableIndex {
+pub trait DbTableIndexImpl {
     fn table_index_dir(&self, table_name: impl AsRef<str>) -> PathBuf;
     fn table_index_path(&self, table_name: impl AsRef<str>, field_name: impl AsRef<str>)
     -> PathBuf;
 }
 
-impl ImplDbTableIndex for Database {
+impl DbTableIndexImpl for Database {
     /// Gets the filepath to the index directory of the given table,
     /// where `table_name` is the name of the table.
     ///

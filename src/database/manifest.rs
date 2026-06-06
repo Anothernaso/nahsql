@@ -30,7 +30,7 @@ impl DbManifest {
     }
 }
 
-pub trait ImplDbManifest {
+pub trait DbManifestImpl {
     fn mf_path(&self) -> PathBuf;
 
     #[cfg(all(feature = "std"))]
@@ -46,7 +46,7 @@ pub trait ImplDbManifest {
     fn get_crate_version_async(&self) -> impl Future<Output = Result<String, DbError>> + Send;
 }
 
-impl ImplDbManifest for Database {
+impl DbManifestImpl for Database {
     /// Gets the filepath to the manifest of this database.
     fn mf_path(&self) -> PathBuf {
         self.path.join(MANIFEST_PATH)

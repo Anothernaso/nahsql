@@ -2,11 +2,11 @@ use crate::database::{
     Database, DbError,
     table::{
         DbTable,
-        index::{DbTableIndex, ImplDbTableIndex},
+        index::{DbTableIndex, DbTableIndexImpl},
     },
 };
 
-pub trait ImplDbTableValidate {
+pub trait DbTableValidateImpl {
     #[cfg(all(feature = "std"))]
     fn validate_table_sync(&self, table_name: impl AsRef<str>) -> Result<(), DbError>;
 
@@ -17,7 +17,7 @@ pub trait ImplDbTableValidate {
     ) -> impl Future<Output = Result<(), DbError>> + Send;
 }
 
-impl ImplDbTableValidate for Database {
+impl DbTableValidateImpl for Database {
     /// Makes the table on the filesystem match the database's schema.
     ///
     /// Returns a `DbError` if anything goes wrong.
