@@ -10,8 +10,8 @@ const INDEX_DIR: &str = "indices";
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DbTableIndex {
-    /// The structure is `<key_field_value, element_primary_key>`
-    elements: HashMap<ValueKey, ValueKey>,
+    /// The structure is `<key_field_value, entry_primary_key>`
+    entries: HashMap<ValueKey, ValueKey>,
 }
 
 impl DbTableIndex {
@@ -19,12 +19,12 @@ impl DbTableIndex {
         Self::default()
     }
 
-    pub fn elements(&self) -> &HashMap<ValueKey, ValueKey> {
-        &self.elements
+    pub fn entries(&self) -> &HashMap<ValueKey, ValueKey> {
+        &self.entries
     }
 
-    pub fn elements_mut(&mut self) -> &mut HashMap<ValueKey, ValueKey> {
-        &mut self.elements
+    pub fn entries_mut(&mut self) -> &mut HashMap<ValueKey, ValueKey> {
+        &mut self.entries
     }
 }
 

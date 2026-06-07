@@ -40,7 +40,7 @@ fn main() -> anyhow::Result<()> {
 
 #[cfg(all(feature = "tokio", not(feature = "std")))]
 #[tokio::main]
-fn main() -> anyhow::Result<()> {
+async fn main() -> anyhow::Result<()> {
     let schema = SchemaBuilder::new(|schema| {
         Ok(schema.table("users", |table| {
             Ok(table

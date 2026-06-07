@@ -25,6 +25,7 @@ derive_more = { version = "2", features = ["display"] }
 
 [dev-dependencies]
 colored = "3"
+tokio = { version = "1", features = ["full"] }
 
 [features]
 default = ["std"]

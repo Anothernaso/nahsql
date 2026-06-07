@@ -48,11 +48,11 @@ impl DbTableValidateImpl for Database {
             fs::create_dir_all(index_dir).map_err(|e| DbError::IoError(e))?;
         }
 
-        let element_dir = self.table_element_dir(table_name);
+        let entry_dir = self.table_entry_dir(table_name);
 
-        // Create the element directory if it doesn't exist
-        if !fs::exists(&element_dir).map_err(|e| DbError::IoError(e))? {
-            fs::create_dir_all(element_dir).map_err(|e| DbError::IoError(e))?;
+        // Create the entry directory if it doesn't exist
+        if !fs::exists(&entry_dir).map_err(|e| DbError::IoError(e))? {
+            fs::create_dir_all(entry_dir).map_err(|e| DbError::IoError(e))?;
         }
 
         let fields = table.fields();
@@ -88,8 +88,8 @@ impl DbTableValidateImpl for Database {
                 index = serde_json::from_str(&index_json).map_err(|e| DbError::SerError(e))?;
             }
 
-            // Remove all elements from the index that don't match the types in the schema
-            index.elements_mut().retain(|fkey, pkey| {
+            // Remove all entries from the index that don't match the types in the schema
+            index.entries_mut().retain(|fkey, pkey| {
                 fkey.r#type() == field.r#type() && pkey.r#type() == pkey_field.r#type()
             });
 
@@ -147,14 +147,14 @@ impl DbTableValidateImpl for Database {
                     .map_err(|e| DbError::IoError(e))?;
             }
 
-            let element_dir = self.table_element_dir(table_name);
+            let entry_dir = self.table_entry_dir(table_name);
 
-            // Create the element directory if it doesn't exist
-            if !fs::try_exists(&element_dir)
+            // Create the entry directory if it doesn't exist
+            if !fs::try_exists(&entry_dir)
                 .await
                 .map_err(|e| DbError::IoError(e))?
             {
-                fs::create_dir_all(element_dir)
+                fs::create_dir_all(entry_dir)
                     .await
                     .map_err(|e| DbError::IoError(e))?;
             }
@@ -196,8 +196,8 @@ impl DbTableValidateImpl for Database {
                     index = serde_json::from_str(&index_json).map_err(|e| DbError::SerError(e))?;
                 }
 
-                // Remove all elements from the index that don't match the types in the schema
-                index.elements_mut().retain(|fkey, pkey| {
+                // Remove all entries from the index that don't match the types in the schema
+                index.entries_mut().retain(|fkey, pkey| {
                     fkey.r#type() == field.r#type() && pkey.r#type() == pkey_field.r#type()
                 });
 
