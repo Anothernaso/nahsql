@@ -1,10 +1,8 @@
+mod index;
+
 use crate::database::{
     Database, DbError,
-    table::{
-        DbTableImpl,
-        entry::DbTableEntryImpl,
-        index::{DbTableIndex, DbTableIndexImpl},
-    },
+    table::{DbTableImpl, entry::DbTableEntryImpl, index::DbTableIndexImpl},
 };
 
 pub trait DbTableValidateImpl {
@@ -25,6 +23,7 @@ impl DbTableValidateImpl for Database {
     ///
     #[cfg(all(feature = "std"))]
     fn validate_table_sync(&self, table_name: impl AsRef<str>) -> Result<(), DbError> {
+        use index::validate_table_index_sync;
         use std::fs;
 
         let table_name = table_name.as_ref();
@@ -72,33 +71,7 @@ impl DbTableValidateImpl for Database {
             .iter()
             .filter(|(_, f)| f.is_key() && pkey_field.name() != f.name())
         {
-            let field_name = field.name();
-            let index_path = self.table_index_path(table_name, field_name);
-
-            let mut index: DbTableIndex;
-
-            // Create the index if it doesn't exist
-            if !fs::exists(&index_path).map_err(|e| DbError::IoError(e))? {
-                index = DbTableIndex::new();
-            }
-            // Read the index if it already exists
-            else {
-                let index_json =
-                    fs::read_to_string(&index_path).map_err(|e| DbError::IoError(e))?;
-
-                index = serde_json::from_str(&index_json).map_err(|e| DbError::SerError(e))?;
-            }
-
-            // Remove all entries from the index that don't match the types in the schema
-            index.entries_mut().retain(|fkey, pkey| {
-                fkey.r#type() == field.r#type() && pkey.r#type() == pkey_field.r#type()
-            });
-
-            let index_json =
-                serde_json::to_string_pretty(&index).map_err(|e| DbError::SerError(e))?;
-
-            // Write the updated index back to disk
-            fs::write(index_path, index_json).map_err(|e| DbError::IoError(e))?;
+            validate_table_index_sync(self, table_name, field, pkey_field)?;
         }
 
         Ok(())
@@ -113,6 +86,7 @@ impl DbTableValidateImpl for Database {
         &self,
         table_name: impl AsRef<str> + Send,
     ) -> impl Future<Output = Result<(), DbError>> + Send {
+        use index::validate_table_index_async;
         use tokio::fs;
 
         async move {
@@ -176,39 +150,7 @@ impl DbTableValidateImpl for Database {
                 .iter()
                 .filter(|(_, f)| f.is_key() && pkey_field.name() != f.name())
             {
-                let field_name = field.name();
-                let index_path = self.table_index_path(table_name, field_name);
-
-                let mut index: DbTableIndex;
-
-                // Create the index if it doesn't exist
-                if !fs::try_exists(&index_path)
-                    .await
-                    .map_err(|e| DbError::IoError(e))?
-                {
-                    index = DbTableIndex::new();
-                }
-                // Read the index if it already exists
-                else {
-                    let index_json = fs::read_to_string(&index_path)
-                        .await
-                        .map_err(|e| DbError::IoError(e))?;
-
-                    index = serde_json::from_str(&index_json).map_err(|e| DbError::SerError(e))?;
-                }
-
-                // Remove all entries from the index that don't match the types in the schema
-                index.entries_mut().retain(|fkey, pkey| {
-                    fkey.r#type() == field.r#type() && pkey.r#type() == pkey_field.r#type()
-                });
-
-                let index_json =
-                    serde_json::to_string_pretty(&index).map_err(|e| DbError::SerError(e))?;
-
-                // Write the updated index back to disk
-                fs::write(index_path, index_json)
-                    .await
-                    .map_err(|e| DbError::IoError(e))?;
+                validate_table_index_async(self, table_name, field, pkey_field).await?;
             }
 
             Ok(())
