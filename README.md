@@ -32,7 +32,7 @@ Asynchronous, with `tokio`:
 use nahsql::{database::Database, schema::SchemaBuilder, value::ValueType};
 
 #[tokio::main]
-fn main() -> anyhow::Result<()> {
+async fn main() -> anyhow::Result<()> {
     let schema = SchemaBuilder::new(|schema| {
         Ok(schema.table("users", |table| {
             Ok(table
