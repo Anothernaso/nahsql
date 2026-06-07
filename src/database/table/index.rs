@@ -2,13 +2,15 @@ use crate::{
     database::{Database, table::DbTableImpl},
     value::ValueKey,
 };
+use derive_more::Display;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{collections::HashMap, path::PathBuf};
 
 const INDEX_DIR: &str = "indices";
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Display, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[display("DbTableIndex {{ entries: {:?} }}", entries)]
 pub struct DbTableIndex {
     /// The structure is `<key_field_value, entry_primary_key>`
     entries: HashMap<ValueKey, ValueKey>,

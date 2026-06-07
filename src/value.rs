@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
+use strum_macros::Display;
 
-#[derive(Debug, Clone, PartialEq, PartialOrd, Serialize, Deserialize)]
+#[derive(Debug, Display, Clone, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum Value {
     String(String),
     Bool(bool),
@@ -134,7 +135,7 @@ impl From<Value> for Option<ValueKey> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Debug, Display, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum ValueKey {
     String(String),
     Bool(bool),
@@ -192,17 +193,7 @@ impl From<ValueKey> for Vec<u8> {
 }
 
 #[derive(
-    Debug,
-    strum_macros::Display,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    PartialOrd,
-    Ord,
-    Hash,
-    Serialize,
-    Deserialize,
+    Debug, Display, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
 )]
 pub enum ValueType {
     String,

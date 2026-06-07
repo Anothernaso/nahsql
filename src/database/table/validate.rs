@@ -2,6 +2,7 @@ use crate::database::{
     Database, DbError,
     table::{
         DbTableImpl,
+        entry::DbTableEntryImpl,
         index::{DbTableIndex, DbTableIndexImpl},
     },
 };
