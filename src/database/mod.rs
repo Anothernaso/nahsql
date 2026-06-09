@@ -1,7 +1,4 @@
-mod entry;
 mod error;
-mod index;
-mod manifest;
 
 use crate::schema::Schema;
 use error::DbError;
