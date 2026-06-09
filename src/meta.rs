@@ -3,6 +3,9 @@
 //! and other miscellaneous
 //! goodies.
 
+/// The version of the `nahsql` crate,
+/// fetched at compile-time using the
+/// `CARGO_PKG_VERSION` environment variable.
 pub const CRATE_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// The type to be used

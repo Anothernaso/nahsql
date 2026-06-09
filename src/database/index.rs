@@ -4,13 +4,19 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Display, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[display("DbTableIndex {{ entries: {:?} }}", entries)]
-pub struct DbTableIndex {
+#[display(
+    r#"
+Table Index:
+    Entries - {:?}
+    "#,
+    entries
+)]
+pub struct Index {
     /// The structure is `<key_field_value, entry_primary_key>`
     entries: HashMap<ValueKey, ValueKey>,
 }
 
-impl DbTableIndex {
+impl Index {
     pub fn new() -> Self {
         Self::default()
     }
