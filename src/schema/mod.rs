@@ -4,17 +4,18 @@ mod table;
 pub use field::SchemaField;
 pub use table::SchemaTable;
 
+use crate::meta::SchemaVersion;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Schema {
-    pub(self) version: u64,
+    pub(self) version: SchemaVersion,
     pub(self) tables: HashMap<String, SchemaTable>,
 }
 
 impl Schema {
-    pub fn new(version: u64, tables: impl IntoIterator<Item = SchemaTable>) -> Self {
+    pub fn new(version: SchemaVersion, tables: impl IntoIterator<Item = SchemaTable>) -> Self {
         Self {
             version,
             tables: tables
@@ -28,7 +29,7 @@ impl Schema {
         &self.tables
     }
 
-    pub fn version(&self) -> u64 {
+    pub fn version(&self) -> SchemaVersion {
         self.version
     }
 }
