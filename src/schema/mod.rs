@@ -1,3 +1,6 @@
+//! Database schema and
+//! related data structures.
+
 mod field;
 mod table;
 
@@ -8,6 +11,12 @@ use crate::meta::SchemaVersion;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+/// Represents the entire database schema.
+///
+/// It defines the structure of a database,
+/// its tables, the fields within those tables,
+/// the schema version and so on.
+///
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Schema {
     pub(self) version: SchemaVersion,
@@ -15,6 +24,7 @@ pub struct Schema {
 }
 
 impl Schema {
+    /// Creates a new schema with the given version and tables.
     pub fn new(version: SchemaVersion, tables: impl IntoIterator<Item = SchemaTable>) -> Self {
         Self {
             version,

@@ -1,6 +1,7 @@
 use crate::value::ValueType;
 use serde::{Deserialize, Serialize};
 
+/// Represents a field of a table in a database schema.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct SchemaField {
     pub(super) name: String,
@@ -9,6 +10,16 @@ pub struct SchemaField {
 }
 
 impl SchemaField {
+    /// Creates a new schema field with the given name, key flag, and type.
+    ///
+    /// # Arguments
+    ///
+    /// `is_key` is a flag indicating whether the
+    /// field is a key field.
+    /// A key field must have a `ValueType`
+    /// that is compatible with `ValueKey` as
+    /// it will be indexed.
+    ///
     pub fn new(name: impl Into<String>, is_key: bool, r#type: impl Into<ValueType>) -> Self {
         Self {
             name: name.into(),

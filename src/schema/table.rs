@@ -2,6 +2,7 @@ use crate::schema::field::SchemaField;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+/// Represents a table in a database schema.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SchemaTable {
     pub(super) name: String,
@@ -10,6 +11,17 @@ pub struct SchemaTable {
 }
 
 impl SchemaTable {
+    /// Creates a new schema table with
+    /// the given name, primary key, and fields.
+    ///
+    /// # Arguments
+    ///
+    /// `primary key` is the name of
+    /// the field that will serve
+    /// as the primary key of the database
+    /// and therefore must be a valid
+    /// key field in the table.
+    ///
     pub fn new(
         name: impl Into<String>,
         primary_key: impl Into<String>,
