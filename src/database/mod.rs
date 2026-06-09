@@ -1,12 +1,10 @@
 pub mod error;
 pub mod manifest;
 pub mod table;
-pub mod validate;
 
 use crate::schema::Schema;
 use error::DbError;
 use std::path::{Path, PathBuf};
-use validate::DbValidateImpl;
 
 const TABLE_DIR: &str = "tables";
 
@@ -24,7 +22,6 @@ impl Database {
         let path = path.into();
 
         let db = Self { path, schema };
-        db.validate_sync()?;
 
         Ok(db)
     }
@@ -37,7 +34,6 @@ impl Database {
         let path = path.into();
 
         let db = Self { path, schema };
-        db.validate_async().await?;
 
         Ok(db)
     }

@@ -1,6 +1,5 @@
 pub mod entry;
 pub mod index;
-pub mod validate;
 
 use crate::database::Database;
 use sha2::{Digest, Sha256};
