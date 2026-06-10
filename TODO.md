@@ -2,3 +2,5 @@
 - ~~Update `README.md` to reflect new refactor~~
 - ~~Update `examples/std.rs` to reflect new refactor~~
 - ~~`Add `examples/tokio.rs`~~
+- Implement `access` API
+- Implement `query` API

@@ -19,7 +19,7 @@ fn mf_path(db: &Database) -> PathBuf {
 ///
 /// Returns an error if anything goes wrong
 ///
-#[cfg(all(feature = "std"))]
+#[cfg(all(feature = "sync"))]
 pub fn read_manifest_sync(db: &Database) -> Result<DbManifest, Error> {
     use std::fs;
 
@@ -27,10 +27,10 @@ pub fn read_manifest_sync(db: &Database) -> Result<DbManifest, Error> {
 
     let mf: DbManifest;
     if fs::exists(&mf_path).map_err(|e| Error::IoError(e))? {
-        mf = DbManifest::new(db.schema().version())
-    } else {
         let mf_str = fs::read_to_string(mf_path).map_err(|e| Error::IoError(e))?;
         mf = serde_json::from_str(&mf_str).map_err(|e| Error::SerError(e))?;
+    } else {
+        mf = DbManifest::new(db.schema().version());
     }
 
     Ok(mf)
@@ -40,7 +40,7 @@ pub fn read_manifest_sync(db: &Database) -> Result<DbManifest, Error> {
 ///
 /// Returns an error if anything goes wrong
 ///
-#[cfg(all(feature = "tokio"))]
+#[cfg(all(feature = "async"))]
 pub async fn read_manifest_async(db: &Database) -> Result<DbManifest, Error> {
     use tokio::fs;
 
@@ -51,12 +51,12 @@ pub async fn read_manifest_async(db: &Database) -> Result<DbManifest, Error> {
         .await
         .map_err(|e| Error::IoError(e))?
     {
-        mf = DbManifest::new(db.schema().version())
-    } else {
         let mf_str = fs::read_to_string(mf_path)
             .await
             .map_err(|e| Error::IoError(e))?;
         mf = serde_json::from_str(&mf_str).map_err(|e| Error::SerError(e))?;
+    } else {
+        mf = DbManifest::new(db.schema().version());
     }
 
     Ok(mf)
@@ -66,7 +66,7 @@ pub async fn read_manifest_async(db: &Database) -> Result<DbManifest, Error> {
 ///
 /// Returns an error if anything goes wrong
 ///
-#[cfg(all(feature = "std"))]
+#[cfg(all(feature = "sync"))]
 pub fn write_manifest_sync(db: &Database, mf: &DbManifest) -> Result<(), Error> {
     use std::fs;
 
@@ -89,7 +89,7 @@ pub fn write_manifest_sync(db: &Database, mf: &DbManifest) -> Result<(), Error> 
 ///
 /// Returns an error if anything goes wrong
 ///
-#[cfg(all(feature = "tokio"))]
+#[cfg(all(feature = "async"))]
 pub async fn write_manifest_async(db: &Database, mf: &DbManifest) -> Result<(), Error> {
     use tokio::fs;
 

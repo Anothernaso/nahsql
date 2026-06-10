@@ -4,8 +4,9 @@ use nahsql::{
     value::ValueType,
 };
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
+fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::init();
+
     let schema = Schema::new(
         0,
         vec![SchemaTable::new(
@@ -19,7 +20,7 @@ async fn main() -> anyhow::Result<()> {
         )],
     );
 
-    let _db = Database::open_async("./database", schema).await?;
+    let _db = Database::open_sync("./database", schema)?;
 
     Ok(())
 }

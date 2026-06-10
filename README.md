@@ -15,6 +15,8 @@ use nahsql::{
 };
 
 fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::init();
+
     let schema = Schema::new(
         0,
         vec![SchemaTable::new(
@@ -44,6 +46,8 @@ use nahsql::{
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::init();
+
     let schema = Schema::new(
         0,
         vec![SchemaTable::new(

@@ -19,7 +19,7 @@ impl Database {
     /// Produces a warning on crate or schema version
     /// mismatch if the `tracing` feature is enabled.
     ///
-    #[cfg(all(feature = "std"))]
+    #[cfg(all(feature = "sync"))]
     pub fn open_sync(path: impl Into<PathBuf>, schema: Schema) -> Result<Self, Error> {
         use crate::access::{read_manifest_sync, write_manifest_sync};
 
@@ -64,7 +64,7 @@ impl Database {
     /// Produces a warning on crate or schema version
     /// mismatch if the `tracing` feature is enabled.
     ///
-    #[cfg(all(feature = "tokio"))]
+    #[cfg(all(feature = "async"))]
     pub async fn open_async(path: impl Into<PathBuf>, schema: Schema) -> Result<Self, Error> {
         use crate::access::{read_manifest_async, write_manifest_async};
 
