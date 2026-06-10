@@ -5,6 +5,6 @@ mod entry;
 mod index;
 mod manifest;
 
-pub use entry::Entry;
-pub use index::Index;
-pub use manifest::Manifest;
+pub use entry::DbEntry;
+pub use index::DbIndex;
+pub use manifest::DbManifest;

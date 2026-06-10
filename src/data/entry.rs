@@ -17,21 +17,7 @@ Table Entry:
     "#,
     fields
 )]
-pub struct Entry {
+pub struct DbEntry {
     /// The structure is `<field_name, field_value>`
-    fields: HashMap<String, Value>,
-}
-
-impl Entry {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn fields(&self) -> &HashMap<String, Value> {
-        &self.fields
-    }
-
-    pub fn fields_mut(&mut self) -> &mut HashMap<String, Value> {
-        &mut self.fields
-    }
+    pub fields: HashMap<String, Value>,
 }

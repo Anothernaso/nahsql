@@ -10,6 +10,7 @@ homepage = "https://github.com/Anothernaso/nahsql"
 
 [dependencies]
 tokio = { version = "1", features = ["fs"], optional = true }
+tracing = { version = "0.1", optional = true }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -18,6 +19,7 @@ sha2 = "0.11"
 hex = "0.4"
 
 thiserror = "2"
+anyhow = "1"
 
 strum_macros = "0.28"
 derive_more = { version = "2", features = ["display"] }
@@ -27,7 +29,9 @@ anyhow = "1"
 tokio = { version = "1", features = ["full"] }
 
 [features]
-default = ["std"]
+default = ["std", "tracing"]
 
 std = []
 tokio = ["dep:tokio"]
+
+tracing = ["dep:tracing"]

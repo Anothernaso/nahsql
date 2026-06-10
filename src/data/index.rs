@@ -11,21 +11,7 @@ Table Index:
     "#,
     entries
 )]
-pub struct Index {
+pub struct DbIndex {
     /// The structure is `<key_field_value, entry_primary_key>`
-    entries: HashMap<ValueKey, ValueKey>,
-}
-
-impl Index {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn entries(&self) -> &HashMap<ValueKey, ValueKey> {
-        &self.entries
-    }
-
-    pub fn entries_mut(&mut self) -> &mut HashMap<ValueKey, ValueKey> {
-        &mut self.entries
-    }
+    pub entries: HashMap<ValueKey, ValueKey>,
 }
