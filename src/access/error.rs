@@ -1,3 +1,4 @@
+use crate::schema;
 use std::io;
 use thiserror::Error;
 
@@ -10,6 +11,10 @@ pub enum Error {
     /// Something went wrong during serialization/deserialization.
     #[error("serialization error: {0}")]
     SerError(serde_json::Error),
+
+    /// Something does not match the schema.
+    #[error("schema error: {0}")]
+    SchemaError(schema::Error),
 
     /// An unknown error occurred.
     #[error("unknown error: {0}")]

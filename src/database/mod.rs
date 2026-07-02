@@ -1,5 +1,7 @@
+mod contents;
 mod error;
 
+pub use contents::*;
 pub use error::Error;
 
 use crate::{meta, schema::Schema};

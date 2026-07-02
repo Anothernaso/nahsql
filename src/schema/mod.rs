@@ -1,9 +1,11 @@
 //! Database schema and
 //! related data structures.
 
+mod error;
 mod field;
 mod table;
 
+pub use error::Error;
 pub use field::SchemaField;
 pub use table::SchemaTable;
 

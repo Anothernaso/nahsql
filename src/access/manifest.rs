@@ -2,15 +2,16 @@
 //! the manifest file of a database.
 
 use super::error::Error;
-use crate::{data::DbManifest, database::Database};
+use crate::{
+    data::DbManifest,
+    database::{DB_MANIF_FILE, Database},
+};
 use anyhow::anyhow;
 use std::path::PathBuf;
 
-const MF_FILE: &str = "manifest.json";
-
 fn mf_path(db: &Database) -> PathBuf {
     let mut path = db.path().to_owned();
-    path.push(MF_FILE);
+    path.push(DB_MANIF_FILE);
 
     path
 }
