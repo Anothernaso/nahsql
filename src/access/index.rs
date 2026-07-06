@@ -5,7 +5,6 @@ use super::error::Error;
 use crate::{
     data::DbIndex,
     database::{DB_TABLE_DIR, Database, TB_INDEX_DIR},
-    schema,
 };
 use sha2::{Digest, Sha256};
 use std::path::PathBuf;
@@ -33,7 +32,7 @@ fn idx_path(db: &Database, table: impl AsRef<str>, field: impl AsRef<str>) -> Pa
     path
 }
 
-/// Reads the index of the given field in the
+/// Synchronously reads the index of the given field in the
 /// given table of the given database.
 #[cfg(all(feature = "sync"))]
 pub fn read_index_sync(
@@ -49,18 +48,6 @@ pub fn read_index_sync(
     let table = table.as_ref();
     let field = field.as_ref();
 
-    let t = db
-        .schema()
-        .tables()
-        .get(table)
-        .ok_or_else(|| Error::SchemaError(schema::Error::NoSuchTable(table.into())))?;
-    let _ = t.fields().get(field).ok_or_else(|| {
-        Error::SchemaError(schema::Error::NoSuchField {
-            table: table.into(),
-            field: field.into(),
-        })
-    })?;
-
     let path = idx_path(db, table, field);
 
     let index: DbIndex;
@@ -73,6 +60,49 @@ pub fn read_index_sync(
         let buf = BufReader::new(file);
 
         index = serde_json::from_reader(buf).map_err(|e| Error::SerError(e))?;
+    } else {
+        index = DbIndex::default();
+    }
+
+    Ok(index)
+}
+
+/// Asynchronously reads the index of the given field in the
+/// given table of the given database.
+#[cfg(all(feature = "async"))]
+pub async fn read_index_async(
+    db: &Database,
+    table: impl AsRef<str>,
+    field: impl AsRef<str>,
+) -> Result<DbIndex, Error> {
+    use std::{fs::File, io::BufReader};
+    use tokio::{fs, task::spawn_blocking};
+
+    let table = table.as_ref();
+    let field = field.as_ref();
+
+    let path = idx_path(db, table, field);
+
+    let index: DbIndex;
+
+    if fs::try_exists(&path).await.map_err(|e| Error::IoError(e))? {
+        let file = spawn_blocking(|| -> Result<File, Error> {
+            Ok(File::open(path).map_err(|e| Error::IoError(e))?)
+        })
+        .await
+        .expect("could not join blocking task")?;
+
+        // Use a buffered reader, as index
+        // files are expected to be large.
+        let buf = spawn_blocking(|| BufReader::new(file))
+            .await
+            .expect("could not join blocking task");
+
+        index = spawn_blocking(|| -> Result<DbIndex, Error> {
+            Ok(serde_json::from_reader(buf).map_err(|e| Error::SerError(e))?)
+        })
+        .await
+        .expect("could not join blocking task")?;
     } else {
         index = DbIndex::default();
     }
