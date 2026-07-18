@@ -34,8 +34,7 @@ fn idx_path(db: &Database, table: impl AsRef<str>, field: impl AsRef<str>) -> Pa
 
 /// Synchronously reads the index of the given field in the
 /// given table of the given database.
-#[cfg(all(feature = "sync"))]
-pub fn read_index_sync(
+pub fn read_index(
     db: &Database,
     table: impl AsRef<str>,
     field: impl AsRef<str>,
@@ -60,49 +59,6 @@ pub fn read_index_sync(
         let buf = BufReader::new(file);
 
         index = serde_json::from_reader(buf).map_err(|e| Error::SerError(e))?;
-    } else {
-        index = DbIndex::default();
-    }
-
-    Ok(index)
-}
-
-/// Asynchronously reads the index of the given field in the
-/// given table of the given database.
-#[cfg(all(feature = "async"))]
-pub async fn read_index_async(
-    db: &Database,
-    table: impl AsRef<str>,
-    field: impl AsRef<str>,
-) -> Result<DbIndex, Error> {
-    use std::{fs::File, io::BufReader};
-    use tokio::{fs, task::spawn_blocking};
-
-    let table = table.as_ref();
-    let field = field.as_ref();
-
-    let path = idx_path(db, table, field);
-
-    let index: DbIndex;
-
-    if fs::try_exists(&path).await.map_err(|e| Error::IoError(e))? {
-        let file = spawn_blocking(|| -> Result<File, Error> {
-            Ok(File::open(path).map_err(|e| Error::IoError(e))?)
-        })
-        .await
-        .expect("could not join blocking task")?;
-
-        // Use a buffered reader, as index
-        // files are expected to be large.
-        let buf = spawn_blocking(|| BufReader::new(file))
-            .await
-            .expect("could not join blocking task");
-
-        index = spawn_blocking(|| -> Result<DbIndex, Error> {
-            Ok(serde_json::from_reader(buf).map_err(|e| Error::SerError(e))?)
-        })
-        .await
-        .expect("could not join blocking task")?;
     } else {
         index = DbIndex::default();
     }
