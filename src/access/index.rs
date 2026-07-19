@@ -14,7 +14,8 @@ use std::{
     path::PathBuf,
 };
 
-fn idx_path(db: &Database, table: impl AsRef<str>, field: impl AsRef<str>) -> PathBuf {
+fn idx_path(db: impl AsRef<Database>, table: impl AsRef<str>, field: impl AsRef<str>) -> PathBuf {
+    let db = db.as_ref();
     let table = table.as_ref();
     let field = field.as_ref();
 
@@ -40,10 +41,11 @@ fn idx_path(db: &Database, table: impl AsRef<str>, field: impl AsRef<str>) -> Pa
 /// Synchronously reads the index of the given field in the
 /// given table of the given database.
 pub fn read_index(
-    db: &Database,
+    db: impl AsRef<Database>,
     table: impl AsRef<str>,
     field: impl AsRef<str>,
 ) -> Result<DbIndex, Error> {
+    let db = db.as_ref();
     let table = table.as_ref();
     let field = field.as_ref();
 
@@ -68,13 +70,15 @@ pub fn read_index(
 
 /// Writes the given index to the given database.
 pub fn write_index(
-    db: &Database,
+    db: impl AsRef<Database>,
     table: impl AsRef<str>,
     field: impl AsRef<str>,
-    index: &DbIndex,
+    index: impl AsRef<DbIndex>,
 ) -> Result<(), Error> {
+    let db = db.as_ref();
     let table = table.as_ref();
     let field = field.as_ref();
+    let index = index.as_ref();
 
     let path = idx_path(db, table, field);
     let parent = path.parent().ok_or(Error::UnknownError(anyhow!(

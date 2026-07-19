@@ -27,3 +27,9 @@ impl DbManifest {
         }
     }
 }
+
+impl AsRef<DbManifest> for DbManifest {
+    fn as_ref(&self) -> &DbManifest {
+        &self
+    }
+}

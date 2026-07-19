@@ -135,6 +135,12 @@ impl From<Value> for Option<ValueKey> {
     }
 }
 
+impl AsRef<Value> for Value {
+    fn as_ref(&self) -> &Value {
+        &self
+    }
+}
+
 #[derive(Debug, Display, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum ValueKey {
     String(String),
@@ -175,20 +181,26 @@ impl From<ValueKey> for Vec<u8> {
                 buf.to_vec()
             }
 
-            ValueKey::U8(v) => vec![v],
+            ValueKey::U8(v) => v.to_le_bytes().to_vec(),
             ValueKey::U16(v) => v.to_le_bytes().to_vec(),
             ValueKey::U32(v) => v.to_le_bytes().to_vec(),
             ValueKey::U64(v) => v.to_le_bytes().to_vec(),
             ValueKey::U128(v) => v.to_le_bytes().to_vec(),
             ValueKey::USize(v) => v.to_le_bytes().to_vec(),
 
-            ValueKey::I8(v) => vec![v as u8],
+            ValueKey::I8(v) => v.to_le_bytes().to_vec(),
             ValueKey::I16(v) => v.to_le_bytes().to_vec(),
             ValueKey::I32(v) => v.to_le_bytes().to_vec(),
             ValueKey::I64(v) => v.to_le_bytes().to_vec(),
             ValueKey::I128(v) => v.to_le_bytes().to_vec(),
             ValueKey::ISize(v) => v.to_le_bytes().to_vec(),
         }
+    }
+}
+
+impl AsRef<ValueKey> for ValueKey {
+    fn as_ref(&self) -> &ValueKey {
+        &self
     }
 }
 
@@ -246,5 +258,11 @@ impl ValueType {
             ValueType::F32 => false,
             ValueType::F64 => false,
         }
+    }
+}
+
+impl AsRef<ValueType> for ValueType {
+    fn as_ref(&self) -> &ValueType {
+        &self
     }
 }

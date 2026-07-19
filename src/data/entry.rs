@@ -21,3 +21,9 @@ pub struct DbEntry {
     /// The structure is `<field_name, field_value>`
     pub fields: HashMap<String, Value>,
 }
+
+impl AsRef<DbEntry> for DbEntry {
+    fn as_ref(&self) -> &DbEntry {
+        &self
+    }
+}

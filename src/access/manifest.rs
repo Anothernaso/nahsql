@@ -7,22 +7,18 @@ use crate::{
     database::{DB_MANIF_FILE, Database},
 };
 use anyhow::anyhow;
-use std::path::PathBuf;
+use std::{fs, path::PathBuf};
 
 fn mf_path(db: &Database) -> PathBuf {
-    let mut path = db.path().to_owned();
-    path.push(DB_MANIF_FILE);
-
-    path
+    db.path().join(DB_MANIF_FILE)
 }
 
 /// Reads the manifest file of the database synchronously.
 ///
 /// Returns an error if anything goes wrong
 ///
-pub fn read_manifest(db: &Database) -> Result<DbManifest, Error> {
-    use std::fs;
-
+pub fn read_manifest(db: impl AsRef<Database>) -> Result<DbManifest, Error> {
+    let db = db.as_ref();
     let mf_path = mf_path(db);
 
     let mf: DbManifest;
@@ -40,8 +36,9 @@ pub fn read_manifest(db: &Database) -> Result<DbManifest, Error> {
 ///
 /// Returns an error if anything goes wrong
 ///
-pub fn write_manifest(db: &Database, mf: &DbManifest) -> Result<(), Error> {
-    use std::fs;
+pub fn write_manifest(db: impl AsRef<Database>, mf: impl AsRef<DbManifest>) -> Result<(), Error> {
+    let db = db.as_ref();
+    let mf = mf.as_ref();
 
     let path = mf_path(db);
     let parent = path.parent().ok_or(Error::UnknownError(anyhow!(

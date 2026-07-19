@@ -4,7 +4,11 @@ mod error;
 pub use contents::*;
 pub use error::Error;
 
-use crate::{meta, schema::Schema};
+use crate::{
+    access::{read_manifest, write_manifest},
+    meta,
+    schema::Schema,
+};
 use std::path::{Path, PathBuf};
 
 pub struct Database {
@@ -22,8 +26,6 @@ impl Database {
     /// mismatch if the `tracing` feature is enabled.
     ///
     pub fn open(path: impl Into<PathBuf>, schema: Schema) -> Result<Self, Error> {
-        use crate::access::{read_manifest, write_manifest};
-
         let path = path.into();
         let db = Self { path, schema };
 
@@ -46,5 +48,11 @@ impl Database {
     /// Gets the schema of the database.
     pub fn schema(&self) -> &Schema {
         &self.schema
+    }
+}
+
+impl AsRef<Database> for Database {
+    fn as_ref(&self) -> &Database {
+        &self
     }
 }
