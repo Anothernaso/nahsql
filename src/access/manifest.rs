@@ -43,17 +43,17 @@ pub fn read_manifest(db: &Database) -> Result<DbManifest, Error> {
 pub fn write_manifest(db: &Database, mf: &DbManifest) -> Result<(), Error> {
     use std::fs;
 
-    let mf_path = mf_path(db);
-    let mf_dir = mf_path.parent().ok_or(Error::UnknownError(anyhow!(
+    let path = mf_path(db);
+    let parent = path.parent().ok_or(Error::UnknownError(anyhow!(
         "database manifest path has no parent"
     )))?;
 
-    if !fs::exists(&mf_dir).map_err(|e| Error::IoError(e))? {
-        fs::create_dir_all(mf_dir).map_err(|e| Error::IoError(e))?;
+    if !fs::exists(&parent).map_err(|e| Error::IoError(e))? {
+        fs::create_dir_all(parent).map_err(|e| Error::IoError(e))?;
     }
 
     let mf_str = serde_json::to_string_pretty(mf).map_err(|e| Error::SerError(e))?;
-    fs::write(mf_path, &mf_str).map_err(|e| Error::IoError(e))?;
+    fs::write(path, &mf_str).map_err(|e| Error::IoError(e))?;
 
     Ok(())
 }
