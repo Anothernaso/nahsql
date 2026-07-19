@@ -49,7 +49,7 @@ pub fn write_manifest(db: impl AsRef<Database>, mf: impl AsRef<DbManifest>) -> R
         fs::create_dir_all(parent)?;
     }
 
-    let mf_str = serde_json::to_string_pretty(mf)?;
+    let mf_str = serde_json::to_string(mf)?;
     fs::write(path, &mf_str)?;
 
     Ok(())

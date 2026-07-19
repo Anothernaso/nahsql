@@ -25,8 +25,10 @@ impl Database {
     /// Produces a warning on crate or schema version
     /// mismatch if the `tracing` feature is enabled.
     ///
-    pub fn open(path: impl Into<PathBuf>, schema: Schema) -> Result<Self, Error> {
+    pub fn open(path: impl Into<PathBuf>, schema: impl Into<Schema>) -> Result<Self, Error> {
         let path = path.into();
+        let schema = schema.into();
+
         let db = Self { path, schema };
 
         let mut mf = read_manifest(&db).map_err(|e| Error::AccessError(e))?;
