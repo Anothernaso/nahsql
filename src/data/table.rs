@@ -1,23 +1,23 @@
 use crate::value::ValueKey;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::HashSet;
 
 #[derive(Debug, Display, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[display(
     r#"
-Table Index:
+Table Manifest:
     Entries - {:?}
     "#,
     entries
 )]
-pub struct TbIndex {
-    /// The structure is `<key_field_value, entry_primary_key>`
-    pub entries: HashMap<ValueKey, ValueKey>,
+pub struct TbManifest {
+    /// List of all primary keys in the table
+    pub entries: HashSet<ValueKey>,
 }
 
-impl AsRef<TbIndex> for TbIndex {
-    fn as_ref(&self) -> &TbIndex {
+impl AsRef<TbManifest> for TbManifest {
+    fn as_ref(&self) -> &TbManifest {
         &self
     }
 }

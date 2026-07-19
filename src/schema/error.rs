@@ -9,4 +9,7 @@ pub enum Error {
 
     #[error("no such field in table `{table}`: {field}")]
     NoSuchField { table: String, field: String },
+
+    #[error("unknown error: {0}")]
+    Unknown(#[from] anyhow::Error),
 }

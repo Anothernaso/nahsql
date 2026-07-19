@@ -1,4 +1,5 @@
 pub mod access;
+pub mod auxiliary;
 pub mod data;
 pub mod database;
 pub mod meta;

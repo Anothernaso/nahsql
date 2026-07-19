@@ -22,9 +22,9 @@ pub fn read_manifest(db: impl AsRef<Database>) -> Result<DbManifest, Error> {
     let mf_path = mf_path(db);
 
     let mf: DbManifest;
-    if fs::exists(&mf_path).map_err(|e| Error::IoError(e))? {
-        let mf_str = fs::read_to_string(mf_path).map_err(|e| Error::IoError(e))?;
-        mf = serde_json::from_str(&mf_str).map_err(|e| Error::SerError(e))?;
+    if fs::exists(&mf_path)? {
+        let mf_str = fs::read_to_string(mf_path)?;
+        mf = serde_json::from_str(&mf_str)?;
     } else {
         mf = DbManifest::new(db.schema().version());
     }
@@ -41,16 +41,16 @@ pub fn write_manifest(db: impl AsRef<Database>, mf: impl AsRef<DbManifest>) -> R
     let mf = mf.as_ref();
 
     let path = mf_path(db);
-    let parent = path.parent().ok_or(Error::UnknownError(anyhow!(
-        "database manifest path has no parent"
-    )))?;
+    let parent = path
+        .parent()
+        .ok_or(anyhow!("database manifest path has no parent"))?;
 
-    if !fs::exists(&parent).map_err(|e| Error::IoError(e))? {
-        fs::create_dir_all(parent).map_err(|e| Error::IoError(e))?;
+    if !fs::exists(&parent)? {
+        fs::create_dir_all(parent)?;
     }
 
-    let mf_str = serde_json::to_string_pretty(mf).map_err(|e| Error::SerError(e))?;
-    fs::write(path, &mf_str).map_err(|e| Error::IoError(e))?;
+    let mf_str = serde_json::to_string_pretty(mf)?;
+    fs::write(path, &mf_str)?;
 
     Ok(())
 }

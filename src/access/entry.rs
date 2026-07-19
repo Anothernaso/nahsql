@@ -1,6 +1,6 @@
 use crate::{
     access::Error,
-    data::DbEntry,
+    data::TbEntry,
     database::{DB_TABLE_DIR, Database, ET_ENTRY_FILE, TB_ENTRY_DIR},
     value::ValueKey,
 };
@@ -46,23 +46,23 @@ pub fn read_entry(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
     primary_key: impl Into<ValueKey>,
-) -> Result<DbEntry, Error> {
+) -> Result<TbEntry, Error> {
     let db = db.as_ref();
     let table = table.as_ref();
     let primary_key = primary_key.into();
 
     let path = entry_path(db, table, primary_key);
 
-    let entry: DbEntry;
+    let entry: TbEntry;
 
-    if fs::exists(&path).map_err(|e| Error::IoError(e))? {
-        let file = File::open(path).map_err(|e| Error::IoError(e))?;
+    if fs::exists(&path)? {
+        let file = File::open(path)?;
 
         let buf = BufReader::new(file);
 
-        entry = serde_json::from_reader(buf).map_err(|e| Error::SerError(e))?;
+        entry = serde_json::from_reader(buf)?;
     } else {
-        entry = DbEntry::default();
+        entry = TbEntry::default();
     }
 
     Ok(entry)
@@ -72,7 +72,7 @@ pub fn write_entry(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
     primary_key: impl Into<ValueKey>,
-    entry: impl AsRef<DbEntry>,
+    entry: impl AsRef<TbEntry>,
 ) -> Result<(), Error> {
     let db = db.as_ref();
     let table = table.as_ref();
@@ -80,18 +80,18 @@ pub fn write_entry(
     let entry = entry.as_ref();
 
     let path = entry_path(db, table, primary_key);
-    let parent = path.parent().ok_or(Error::UnknownError(anyhow!(
-        "database entry path has no parent"
-    )))?;
+    let parent = path
+        .parent()
+        .ok_or(anyhow!("database entry path has no parent"))?;
 
-    if !fs::exists(parent).map_err(|e| Error::IoError(e))? {
-        fs::create_dir_all(parent).map_err(|e| Error::IoError(e))?;
+    if !fs::exists(parent)? {
+        fs::create_dir_all(parent)?;
     }
 
-    let file = File::create(path).map_err(|e| Error::IoError(e))?;
+    let file = File::create(path)?;
     let buf = BufWriter::new(file);
 
-    serde_json::to_writer(buf, entry).map_err(|e| Error::SerError(e))?;
+    serde_json::to_writer(buf, entry)?;
 
     Ok(())
 }

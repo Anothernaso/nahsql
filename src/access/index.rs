@@ -3,7 +3,7 @@
 
 use super::error::Error;
 use crate::{
-    data::DbIndex,
+    data::TbIndex,
     database::{DB_TABLE_DIR, Database, TB_INDEX_DIR},
 };
 use anyhow::anyhow;
@@ -44,25 +44,25 @@ pub fn read_index(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
     field: impl AsRef<str>,
-) -> Result<DbIndex, Error> {
+) -> Result<TbIndex, Error> {
     let db = db.as_ref();
     let table = table.as_ref();
     let field = field.as_ref();
 
     let path = idx_path(db, table, field);
 
-    let index: DbIndex;
+    let index: TbIndex;
 
-    if fs::exists(&path).map_err(|e| Error::IoError(e))? {
-        let file = File::open(path).map_err(|e| Error::IoError(e))?;
+    if fs::exists(&path)? {
+        let file = File::open(path)?;
 
         // Use a buffered reader, as index
         // files are expected to be large.
         let buf = BufReader::new(file);
 
-        index = serde_json::from_reader(buf).map_err(|e| Error::SerError(e))?;
+        index = serde_json::from_reader(buf)?;
     } else {
-        index = DbIndex::default();
+        index = TbIndex::default();
     }
 
     Ok(index)
@@ -73,7 +73,7 @@ pub fn write_index(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
     field: impl AsRef<str>,
-    index: impl AsRef<DbIndex>,
+    index: impl AsRef<TbIndex>,
 ) -> Result<(), Error> {
     let db = db.as_ref();
     let table = table.as_ref();
@@ -81,21 +81,21 @@ pub fn write_index(
     let index = index.as_ref();
 
     let path = idx_path(db, table, field);
-    let parent = path.parent().ok_or(Error::UnknownError(anyhow!(
-        "database index path has no parent"
-    )))?;
+    let parent = path
+        .parent()
+        .ok_or(anyhow!("database index path has no parent"))?;
 
-    if !fs::exists(parent).map_err(|e| Error::IoError(e))? {
-        fs::create_dir_all(parent).map_err(|e| Error::IoError(e))?;
+    if !fs::exists(parent)? {
+        fs::create_dir_all(parent)?;
     }
 
-    let file = File::create(path).map_err(|e| Error::IoError(e))?;
+    let file = File::create(path)?;
 
     // Use a buffered reader, as index
     // files are expected to be large.
     let buf = BufWriter::new(file);
 
-    serde_json::to_writer(buf, index).map_err(|e| Error::SerError(e))?;
+    serde_json::to_writer(buf, index)?;
 
     Ok(())
 }
