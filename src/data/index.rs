@@ -38,6 +38,10 @@ impl TbIndex {
         &mut self.normal
     }
 
+    pub fn get_normal(self) -> HashSet<(ValueKey, ValueKey)> {
+        self.normal
+    }
+
     pub fn set_normal(&mut self, normal: impl Into<HashSet<(ValueKey, ValueKey)>>) {
         self.normal = normal.into();
     }
@@ -48,6 +52,10 @@ impl TbIndex {
 
     pub fn unique_mut(&mut self) -> &mut HashMap<ValueKey, ValueKey> {
         &mut self.unique
+    }
+
+    pub fn get_unique(self) -> HashMap<ValueKey, ValueKey> {
+        self.unique
     }
 
     pub fn set_unique(&mut self, unique: impl Into<HashMap<ValueKey, ValueKey>>) {
@@ -61,8 +69,8 @@ impl AsRef<Self> for TbIndex {
     }
 }
 
-impl Into<TbIndex> for &TbIndex {
-    fn into(self) -> TbIndex {
-        self.clone()
+impl From<&TbIndex> for TbIndex {
+    fn from(value: &TbIndex) -> Self {
+        value.clone()
     }
 }

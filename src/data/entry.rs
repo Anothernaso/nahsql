@@ -37,6 +37,10 @@ impl TbEntry {
         &mut self.fields
     }
 
+    pub fn get_fields(self) -> HashMap<String, Value> {
+        self.fields
+    }
+
     pub fn set_fields(&mut self, fields: impl Into<HashMap<String, Value>>) {
         self.fields = fields.into();
     }
@@ -48,8 +52,8 @@ impl AsRef<Self> for TbEntry {
     }
 }
 
-impl Into<TbEntry> for &TbEntry {
-    fn into(self) -> TbEntry {
-        self.clone()
+impl From<&TbEntry> for TbEntry {
+    fn from(value: &TbEntry) -> Self {
+        value.clone()
     }
 }

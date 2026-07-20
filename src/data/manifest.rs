@@ -37,7 +37,7 @@ impl DbManifest {
         self.crate_version = crate_version.into();
     }
 
-    pub fn schema_version(&self) -> SchemaVersion {
+    pub fn get_schema_version(&self) -> SchemaVersion {
         self.schema_version
     }
 
@@ -52,8 +52,8 @@ impl AsRef<Self> for DbManifest {
     }
 }
 
-impl Into<DbManifest> for &DbManifest {
-    fn into(self) -> DbManifest {
-        self.clone()
+impl From<&DbManifest> for DbManifest {
+    fn from(value: &DbManifest) -> Self {
+        value.clone()
     }
 }

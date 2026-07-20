@@ -141,9 +141,9 @@ impl AsRef<Self> for Value {
     }
 }
 
-impl Into<Value> for &Value {
-    fn into(self) -> Value {
-        self.clone()
+impl From<&Value> for Value {
+    fn from(value: &Value) -> Self {
+        value.clone()
     }
 }
 
@@ -210,9 +210,9 @@ impl AsRef<Self> for ValueKey {
     }
 }
 
-impl Into<ValueKey> for &ValueKey {
-    fn into(self) -> ValueKey {
-        self.clone()
+impl From<&ValueKey> for ValueKey {
+    fn from(value: &ValueKey) -> Self {
+        value.clone()
     }
 }
 
@@ -279,8 +279,8 @@ impl AsRef<Self> for ValueType {
     }
 }
 
-impl Into<ValueType> for &ValueType {
-    fn into(self) -> ValueType {
-        self.clone()
+impl From<&ValueType> for ValueType {
+    fn from(value: &ValueType) -> Self {
+        value.clone()
     }
 }

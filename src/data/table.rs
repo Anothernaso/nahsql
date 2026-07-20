@@ -31,6 +31,10 @@ impl DbTable {
         &mut self.entries
     }
 
+    pub fn get_entries(self) -> HashSet<ValueKey> {
+        self.entries
+    }
+
     pub fn set_entries(&mut self, entries: impl Into<HashSet<ValueKey>>) {
         self.entries = entries.into();
     }
@@ -42,8 +46,8 @@ impl AsRef<Self> for DbTable {
     }
 }
 
-impl Into<DbTable> for &DbTable {
-    fn into(self) -> DbTable {
-        self.clone()
+impl From<&DbTable> for DbTable {
+    fn from(value: &DbTable) -> Self {
+        value.clone()
     }
 }
