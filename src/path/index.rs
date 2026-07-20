@@ -17,7 +17,7 @@ pub fn index_inst_file_path(
     let mut index_dir_path = index_dir_path.into();
     let field_name = field_name.as_ref();
 
-    index_dir_path.push(format!("{}.json", hex::encode(Sha256::digest(field_name))));
+    index_dir_path.push(format!("{}.toml", hex::encode(Sha256::digest(field_name))));
 
     index_dir_path
 }

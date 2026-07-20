@@ -13,12 +13,10 @@ pub fn insert_entry(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
     entry: impl Into<TbEntry>,
-    primary_key: impl AsRef<ValueKey>,
 ) -> Result<(), Error> {
     let db = db.as_ref();
     let table = table.as_ref();
     let entry = entry.into();
-    let primary_key = primary_key.as_ref();
 
     let schema = db.schema();
     let tables = schema.tables();
@@ -33,12 +31,20 @@ pub fn insert_entry(
 
     let p_key_field_name = table.primary_key();
 
-    if entry.fields().contains_key(table.primary_key()) {
-        return Err(Error::from(anyhow!(
-            "primary key may not be overridden: {}",
+    let p_key = entry
+        .fields()
+        .get(table.primary_key())
+        .ok_or(Error::from(anyhow!(
+            "primary key field must have a value: {}",
             p_key_field_name
-        )));
-    }
+        )))?;
+
+    let p_key = <Value as Into<Option<ValueKey>>>::into(p_key.into()).ok_or(Error::from(
+        SchemaError::from(anyhow!(
+            "primary key field does not have key-compatible type: {}",
+            p_key_field_name
+        )),
+    ))?;
 
     for (field_name, value) in entry.fields().iter() {
         let field = fields
@@ -49,6 +55,8 @@ pub fn insert_entry(
             }))?;
 
         let field_name = field.name();
+
+        let p_key = &p_key;
 
         if field.value_type() != value.r#type() {
             return Err(Error::from(SchemaError::TypeMismatch {
@@ -73,30 +81,24 @@ pub fn insert_entry(
 
         let mut index = read_index(db, table_name, field_name)?;
 
-        match field.key_type() {
-            KeyType::NormalKey => {
-                // Remove old entry
-                index.normal_mut().retain(|(_, pk)| *pk != *primary_key);
+        // Remove old entry
+        index.entries_mut().retain(|(_, pk)| *pk != *p_key);
 
-                // Insert new entry
-                index.normal_mut().insert((value, primary_key.into()));
-            }
-            KeyType::UniqueKey | KeyType::PrimaryKey => {
-                index.unique_mut().insert(value, primary_key.into());
-            }
-            _ => {
-                panic!("this should not be reachable because of previous filter");
-            }
+        if matches!(field.key_type(), KeyType::UniqueKey | KeyType::PrimaryKey) {
+            // Remove old entry also
+            index.entries_mut().retain(|(vk, _)| *vk != value);
         }
+
+        index.entries_mut().insert((value, p_key.into()));
 
         write_index(db, table_name, field_name, index)?;
     }
 
-    let mut old_entry = read_entry(db, table_name, primary_key)?;
+    let mut old_entry = read_entry(db, table_name, &p_key)?;
 
     old_entry.fields_mut().extend(entry.get_fields());
 
-    write_entry(db, table_name, primary_key, old_entry)?;
+    write_entry(db, table_name, p_key, old_entry)?;
 
     Ok(())
 }

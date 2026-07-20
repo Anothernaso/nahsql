@@ -5,10 +5,7 @@ use crate::{
     path::{self},
     value::ValueKey,
 };
-use std::{
-    fs::{self, File},
-    io::{BufReader, BufWriter},
-};
+use std::fs;
 
 pub fn read_entry(
     db: impl AsRef<Database>,
@@ -30,11 +27,8 @@ pub fn read_entry(
     let entry: TbEntry;
 
     if fs::exists(&path)? {
-        let file = File::open(path)?;
-
-        let buf = BufReader::new(file);
-
-        entry = serde_json::from_reader(buf)?;
+        let entry_toml = fs::read_to_string(&path)?;
+        entry = toml::from_str(&entry_toml)?;
     } else {
         entry = TbEntry::default();
     }
@@ -66,10 +60,8 @@ pub fn write_entry(
         fs::create_dir_all(parent)?;
     }
 
-    let file = File::create(path)?;
-    let buf = BufWriter::new(file);
-
-    serde_json::to_writer(buf, entry)?;
+    let entry_toml = toml::to_string_pretty(entry)?;
+    fs::write(path, entry_toml)?;
 
     Ok(())
 }

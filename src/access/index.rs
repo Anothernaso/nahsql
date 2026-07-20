@@ -7,10 +7,7 @@ use crate::{
     database::Database,
     path::{self},
 };
-use std::{
-    fs::{self, File},
-    io::{BufReader, BufWriter},
-};
+use std::fs;
 
 /// Synchronously reads the index of the given field in the
 /// given table of the given database.
@@ -34,13 +31,8 @@ pub fn read_index(
     let index: TbIndex;
 
     if fs::exists(&path)? {
-        let file = File::open(path)?;
-
-        // Use a buffered reader, as index
-        // files are expected to be large.
-        let buf = BufReader::new(file);
-
-        index = serde_json::from_reader(buf)?;
+        let index_toml = fs::read_to_string(&path)?;
+        index = toml::from_str(&index_toml)?;
     } else {
         index = TbIndex::default();
     }
@@ -70,13 +62,8 @@ pub fn write_index(
         fs::create_dir_all(parent)?;
     }
 
-    let file = File::create(path)?;
-
-    // Use a buffered reader, as index
-    // files are expected to be large.
-    let buf = BufWriter::new(file);
-
-    serde_json::to_writer(buf, index)?;
+    let index_str = toml::to_string_pretty(index)?;
+    fs::write(&path, index_str)?;
 
     Ok(())
 }

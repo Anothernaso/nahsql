@@ -17,7 +17,7 @@ pub fn read_manifest(db: impl AsRef<Database>) -> Result<DbManifest, Error> {
     let mf: DbManifest;
     if fs::exists(&path)? {
         let mf_str = fs::read_to_string(path)?;
-        mf = serde_json::from_str(&mf_str)?;
+        mf = toml::from_str(&mf_str)?;
     } else {
         mf = DbManifest::new(meta::CRATE_VERSION, db.schema().version());
     }
@@ -40,7 +40,7 @@ pub fn write_manifest(db: impl AsRef<Database>, mf: impl AsRef<DbManifest>) -> R
         fs::create_dir_all(parent)?;
     }
 
-    let mf_str = serde_json::to_string(mf)?;
+    let mf_str = toml::to_string_pretty(mf)?;
     fs::write(path, &mf_str)?;
 
     Ok(())

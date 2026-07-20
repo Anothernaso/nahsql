@@ -9,6 +9,7 @@ use crate::{
 };
 
 /// Creates indices for all fields of the given table in the database.
+#[deprecated]
 pub fn create_indices(db: impl AsRef<Database>, table: impl AsRef<str>) -> Result<(), Error> {
     let db = db.as_ref();
     let table = table.as_ref();
@@ -70,7 +71,7 @@ pub fn create_indices(db: impl AsRef<Database>, table: impl AsRef<str>) -> Resul
 
             match field.key_type() {
                 KeyType::NormalKey => {
-                    index.normal_mut().insert((value, p_key.clone()));
+                    index.entries_mut().insert((value, p_key.clone()));
                 }
                 // Treat primary keys that has passed the previous check
                 // as unique keys.
