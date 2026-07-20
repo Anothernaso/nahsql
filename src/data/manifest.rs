@@ -33,3 +33,9 @@ impl AsRef<Self> for DbManifest {
         &self
     }
 }
+
+impl Into<DbManifest> for &DbManifest {
+    fn into(self) -> DbManifest {
+        self.clone()
+    }
+}

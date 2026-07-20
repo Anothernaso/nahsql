@@ -141,6 +141,12 @@ impl AsRef<Self> for Value {
     }
 }
 
+impl Into<Value> for &Value {
+    fn into(self) -> Value {
+        self.clone()
+    }
+}
+
 #[derive(Debug, Display, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum ValueKey {
     String(String),
@@ -204,6 +210,12 @@ impl AsRef<Self> for ValueKey {
     }
 }
 
+impl Into<ValueKey> for &ValueKey {
+    fn into(self) -> ValueKey {
+        self.clone()
+    }
+}
+
 #[derive(
     Debug, Display, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
 )]
@@ -264,5 +276,11 @@ impl ValueType {
 impl AsRef<Self> for ValueType {
     fn as_ref(&self) -> &Self {
         &self
+    }
+}
+
+impl Into<ValueType> for &ValueType {
+    fn into(self) -> ValueType {
+        self.clone()
     }
 }

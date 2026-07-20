@@ -27,3 +27,9 @@ impl AsRef<Self> for TbEntry {
         &self
     }
 }
+
+impl Into<TbEntry> for &TbEntry {
+    fn into(self) -> TbEntry {
+        self.clone()
+    }
+}

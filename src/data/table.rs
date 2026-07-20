@@ -6,18 +6,24 @@ use std::collections::HashSet;
 #[derive(Debug, Display, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[display(
     r#"
-Table Manifest:
+Database Table:
     Entries - {:?}
 "#,
     entries
 )]
-pub struct TbManifest {
+pub struct DbTable {
     /// List of all primary keys in the table
     pub entries: HashSet<ValueKey>,
 }
 
-impl AsRef<Self> for TbManifest {
+impl AsRef<Self> for DbTable {
     fn as_ref(&self) -> &Self {
         &self
+    }
+}
+
+impl Into<DbTable> for &DbTable {
+    fn into(self) -> DbTable {
+        self.clone()
     }
 }

@@ -3,6 +3,7 @@ pub mod auxiliary;
 pub mod data;
 pub mod database;
 pub mod meta;
+pub mod path;
 pub mod query;
 pub mod schema;
 pub mod value;

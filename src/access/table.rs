@@ -1,42 +1,20 @@
-use crate::{
-    access::Error,
-    data::TbManifest,
-    database::{DB_TABLE_DIR, Database, TB_MANIF_FILE},
-};
-use anyhow::anyhow;
-use sha2::{Digest, Sha256};
+use crate::path::{self};
+use crate::{access::Error, data::DbTable, database::Database};
 use std::{
     fs::{self, File},
     io::{BufReader, BufWriter},
-    path::PathBuf,
 };
 
-fn table_mf_path(db: impl AsRef<Database>, table: impl AsRef<str>) -> PathBuf {
+pub fn read_table_mf(db: impl AsRef<Database>, table: impl AsRef<str>) -> Result<DbTable, Error> {
     let db = db.as_ref();
     let table = table.as_ref();
 
-    // Append the table directory to the database path
-    let mut path = db.path().join(DB_TABLE_DIR);
+    let path = path::table_inst_file_path(path::table_inst_dir_path(
+        path::table_dir_path(db.path()),
+        table,
+    ));
 
-    // Append the table name to the table directory
-    path.push(hex::encode(Sha256::digest(table)));
-
-    // Append the manifest file to the table path
-    path.push(TB_MANIF_FILE);
-
-    path
-}
-
-pub fn read_table_mf(
-    db: impl AsRef<Database>,
-    table: impl AsRef<str>,
-) -> Result<TbManifest, Error> {
-    let db = db.as_ref();
-    let table = table.as_ref();
-
-    let path = table_mf_path(db, table);
-
-    let mf: TbManifest;
+    let mf: DbTable;
 
     if fs::exists(&path)? {
         let file = File::open(path)?;
@@ -45,7 +23,7 @@ pub fn read_table_mf(
 
         mf = serde_json::from_reader(buf)?;
     } else {
-        mf = TbManifest::default();
+        mf = DbTable::default();
     }
 
     Ok(mf)
@@ -54,18 +32,16 @@ pub fn read_table_mf(
 pub fn write_table_mf(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
-    mf: impl AsRef<TbManifest>,
+    mf: impl AsRef<DbTable>,
 ) -> Result<(), Error> {
     let db = db.as_ref();
     let table = table.as_ref();
     let mf = mf.as_ref();
 
-    let path = table_mf_path(db, table);
-    let parent = path
-        .parent()
-        .ok_or(anyhow!("table manifest path has no parent"))?;
+    let parent = path::table_inst_dir_path(path::table_dir_path(db.path()), table);
+    let path = path::table_inst_file_path(&parent);
 
-    if !fs::exists(parent)? {
+    if !fs::exists(&parent)? {
         fs::create_dir_all(parent)?;
     }
 

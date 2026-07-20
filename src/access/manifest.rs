@@ -4,13 +4,13 @@
 use super::error::Error;
 use crate::{
     data::DbManifest,
-    database::{DB_MANIF_FILE, Database},
+    database::{DB_MANIF_FILE_NAME, Database},
 };
 use anyhow::anyhow;
 use std::{fs, path::PathBuf};
 
 fn mf_path(db: &Database) -> PathBuf {
-    db.path().join(DB_MANIF_FILE)
+    db.path().join(DB_MANIF_FILE_NAME)
 }
 
 /// Reads the manifest file of the database synchronously.

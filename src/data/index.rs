@@ -24,3 +24,9 @@ impl AsRef<Self> for TbIndex {
         &self
     }
 }
+
+impl Into<TbIndex> for &TbIndex {
+    fn into(self) -> TbIndex {
+        self.clone()
+    }
+}

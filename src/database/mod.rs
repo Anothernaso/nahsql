@@ -77,3 +77,9 @@ impl AsRef<Self> for Database {
         &self
     }
 }
+
+impl Into<Database> for &Database {
+    fn into(self) -> Database {
+        self.clone()
+    }
+}
