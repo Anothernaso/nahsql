@@ -72,8 +72,8 @@ impl Clone for Database {
     }
 }
 
-impl AsRef<Database> for Database {
-    fn as_ref(&self) -> &Database {
+impl AsRef<Self> for Database {
+    fn as_ref(&self) -> &Self {
         &self
     }
 }

@@ -4,7 +4,7 @@ use crate::{
     access::{read_entry, read_index, read_table_mf, write_index},
     auxiliary::Error,
     database::Database,
-    schema::Error as SchemaError,
+    schema::{Error as SchemaError, KeyType},
     value::{Value, ValueKey},
 };
 
@@ -35,11 +35,18 @@ pub fn create_indices(db: impl AsRef<Database>, table: impl AsRef<str>) -> Resul
 
     let table_mf = read_table_mf(db, table_name)?;
 
-    // For each key field except the primary key field
-    for (_, field) in fields
-        .iter()
-        .filter(|(_, f)| f.is_key() && f.name() != p_key_field_name)
-    {
+    // For each key field except the primary key field.
+    //
+    // If a field with a `key_type` of `PrimaryKey`
+    // is not marked as the primary key of the table,
+    // treat it as an `UniqueKey`.
+    //
+    for (_, field) in fields.iter().filter(|(_, f)| {
+        matches!(
+            f.key_type(),
+            KeyType::NormalKey | KeyType::UniqueKey | KeyType::PrimaryKey
+        ) && f.name() != p_key_field_name
+    }) {
         let field_name = field.name();
 
         let mut index = read_index(db, table_name, field_name)?;
@@ -61,7 +68,17 @@ pub fn create_indices(db: impl AsRef<Database>, table: impl AsRef<str>) -> Resul
                 value.r#type()
             ))?;
 
-            index.entries.insert(value, p_key.clone());
+            match field.key_type() {
+                KeyType::NormalKey => {
+                    index.normal.insert((value, p_key.clone()));
+                }
+                // Treat primary keys that has passed the previous check
+                // as unique keys.
+                KeyType::UniqueKey | KeyType::PrimaryKey => {}
+                _ => {
+                    panic!("this should not be reachable because non-key fields are filtered out");
+                }
+            }
         }
 
         write_index(db, table_name, field_name, index)?;

@@ -14,7 +14,7 @@ use std::collections::HashMap;
     r#"
 Table Entry:
     Fields - {:?}
-    "#,
+"#,
     fields
 )]
 pub struct TbEntry {
@@ -22,8 +22,8 @@ pub struct TbEntry {
     pub fields: HashMap<String, Value>,
 }
 
-impl AsRef<TbEntry> for TbEntry {
-    fn as_ref(&self) -> &TbEntry {
+impl AsRef<Self> for TbEntry {
+    fn as_ref(&self) -> &Self {
         &self
     }
 }

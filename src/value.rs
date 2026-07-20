@@ -135,8 +135,8 @@ impl From<Value> for Option<ValueKey> {
     }
 }
 
-impl AsRef<Value> for Value {
-    fn as_ref(&self) -> &Value {
+impl AsRef<Self> for Value {
+    fn as_ref(&self) -> &Self {
         &self
     }
 }
@@ -198,8 +198,8 @@ impl From<ValueKey> for Vec<u8> {
     }
 }
 
-impl AsRef<ValueKey> for ValueKey {
-    fn as_ref(&self) -> &ValueKey {
+impl AsRef<Self> for ValueKey {
+    fn as_ref(&self) -> &Self {
         &self
     }
 }
@@ -261,8 +261,8 @@ impl ValueType {
     }
 }
 
-impl AsRef<ValueType> for ValueType {
-    fn as_ref(&self) -> &ValueType {
+impl AsRef<Self> for ValueType {
+    fn as_ref(&self) -> &Self {
         &self
     }
 }

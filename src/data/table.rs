@@ -8,7 +8,7 @@ use std::collections::HashSet;
     r#"
 Table Manifest:
     Entries - {:?}
-    "#,
+"#,
     entries
 )]
 pub struct TbManifest {
@@ -16,8 +16,8 @@ pub struct TbManifest {
     pub entries: HashSet<ValueKey>,
 }
 
-impl AsRef<TbManifest> for TbManifest {
-    fn as_ref(&self) -> &TbManifest {
+impl AsRef<Self> for TbManifest {
+    fn as_ref(&self) -> &Self {
         &self
     }
 }

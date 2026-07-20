@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 Database Manifest:
     Crate Version  - {}
     Schema Version - {}
-    "#,
+"#,
     crate_version,
     schema_version
 )]
@@ -28,8 +28,8 @@ impl DbManifest {
     }
 }
 
-impl AsRef<DbManifest> for DbManifest {
-    fn as_ref(&self) -> &DbManifest {
+impl AsRef<Self> for DbManifest {
+    fn as_ref(&self) -> &Self {
         &self
     }
 }

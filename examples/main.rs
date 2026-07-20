@@ -6,32 +6,36 @@ fn main() -> anyhow::Result<()> {
         vec![
             SchemaTable::new(
                 "users",
-                "id",
                 vec![
-                    SchemaField::new("id", true, ValueType::U64),
-                    SchemaField::new("username", true, ValueType::String),
-                    SchemaField::new("email", false, ValueType::String),
-                    SchemaField::new("passphrase", false, ValueType::String),
-                    SchemaField::new("followers", false, ValueType::U64),
+                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
+                    SchemaField::new("username", KeyType::NormalKey, ValueType::String),
+                    SchemaField::new("email", KeyType::UniqueKey, ValueType::String),
+                    SchemaField::new("passphrase", KeyType::NonKey, ValueType::String),
                 ],
             ),
             SchemaTable::new(
                 "posts",
-                "id",
                 vec![
-                    SchemaField::new("id", true, ValueType::U64),
-                    SchemaField::new("user_id", false, ValueType::U64),
-                    SchemaField::new("title", true, ValueType::String),
-                    SchemaField::new("content", false, ValueType::String),
+                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
+                    SchemaField::new("user_id", KeyType::NormalKey, ValueType::U64),
+                    SchemaField::new("title", KeyType::NonKey, ValueType::String),
+                    SchemaField::new("content", KeyType::NonKey, ValueType::String),
                 ],
             ),
             SchemaTable::new(
                 "likes",
-                "id",
                 vec![
-                    SchemaField::new("id", true, ValueType::U64),
-                    SchemaField::new("user_id", true, ValueType::U64),
-                    SchemaField::new("post_id", true, ValueType::U64),
+                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
+                    SchemaField::new("user_id", KeyType::NormalKey, ValueType::U64),
+                    SchemaField::new("post_id", KeyType::NormalKey, ValueType::U64),
+                ],
+            ),
+            SchemaTable::new(
+                "followings",
+                vec![
+                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
+                    SchemaField::new("user_id", KeyType::NormalKey, ValueType::U64),
+                    SchemaField::new("following_id", KeyType::NormalKey, ValueType::U64),
                 ],
             ),
         ],

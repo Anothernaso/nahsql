@@ -1,34 +1,78 @@
 use crate::value::ValueType;
+use derive_more::Display as MoreDisplay;
 use serde::{Deserialize, Serialize};
+use strum_macros::Display as StrumDisplay;
+
+/// Represents what type of key a field is.
+#[derive(
+    Debug, StrumDisplay, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
+)]
+pub enum KeyType {
+    /// The field is not a key field.
+    NonKey,
+
+    /// The field is a normal key field, (i.e, not unique).
+    NormalKey,
+
+    /// The field is a unique key field.
+    UniqueKey,
+
+    /// The field is a primary key field which is also unique.
+    ///
+    /// # Notes
+    ///
+    /// There may only be one primary key field in a
+    /// given table, and if more than one is specified,
+    /// then the last one will be used.
+    ///
+    PrimaryKey,
+}
+
+impl AsRef<Self> for KeyType {
+    fn as_ref(&self) -> &Self {
+        &self
+    }
+}
 
 /// Represents a field of a table in a database schema.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(
+    Debug, MoreDisplay, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
+)]
+#[display(
+    r#"
+Schema Field:
+    Name - {}
+    Key Type - {}
+    Value Type - {}
+"#,
+    name,
+    key_type,
+    value_type
+)]
 pub struct SchemaField {
     pub(super) name: String,
-    pub(super) is_key: bool,
-    pub(super) r#type: ValueType,
+    pub(super) key_type: KeyType,
+    pub(super) value_type: ValueType,
 }
 
 impl SchemaField {
-    /// Creates a new schema field with the given name, key flag, and type.
+    /// Creates a new schema field with the given name, key type, and value type.
     ///
     /// # Arguments
     ///
-    /// `is_key` is a flag indicating whether the
-    /// field is a key field.
-    /// A key field must have a `ValueType`
-    /// that is compatible with `ValueKey` as
-    /// it will be indexed.
+    /// `name` is the name of the field.
+    /// `key_type` is the type of key that the field should be.
+    /// `value_type` determines which type of values the field can hold.
     ///
     pub fn new(
         name: impl Into<String>,
-        is_key: impl Into<bool>,
-        r#type: impl Into<ValueType>,
+        key_type: impl Into<KeyType>,
+        value_type: impl Into<ValueType>,
     ) -> Self {
         Self {
             name: name.into(),
-            is_key: is_key.into(),
-            r#type: r#type.into(),
+            key_type: key_type.into(),
+            value_type: value_type.into(),
         }
     }
 
@@ -36,11 +80,11 @@ impl SchemaField {
         &self.name
     }
 
-    pub fn is_key(&self) -> bool {
-        self.is_key
+    pub fn key_type(&self) -> KeyType {
+        self.key_type
     }
 
-    pub fn r#type(&self) -> ValueType {
-        self.r#type
+    pub fn value_type(&self) -> ValueType {
+        self.value_type
     }
 }

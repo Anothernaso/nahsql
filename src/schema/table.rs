@@ -1,4 +1,4 @@
-use crate::schema::field::SchemaField;
+use super::field::{KeyType, SchemaField};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -14,26 +14,30 @@ impl SchemaTable {
     /// Creates a new schema table with
     /// the given name, primary key, and fields.
     ///
-    /// # Arguments
+    /// # Notes
     ///
-    /// `primary key` is the name of
-    /// the field that will serve
-    /// as the primary key of the database
-    /// and therefore must be a valid
-    /// key field in the table.
+    /// At least one field must have its `key_type`
+    /// set to `PrimaryKey`. If more than one field
+    /// has `key_type` set to `PrimaryKey`, the last
+    /// one encountered will be used as the primary key.
     ///
-    pub fn new(
-        name: impl Into<String>,
-        primary_key: impl Into<String>,
-        fields: impl IntoIterator<Item = SchemaField>,
-    ) -> Self {
+    pub fn new(name: impl Into<String>, fields: impl IntoIterator<Item = SchemaField>) -> Self {
+        let mut primary_key: String = String::new();
+
+        let fields = fields
+            .into_iter()
+            .map(|field| {
+                if field.key_type == KeyType::PrimaryKey {
+                    primary_key = field.name.clone();
+                }
+                (field.name.clone(), field)
+            })
+            .collect();
+
         Self {
             name: name.into(),
-            primary_key: primary_key.into(),
-            fields: fields
-                .into_iter()
-                .map(|field| (field.name.clone(), field))
-                .collect(),
+            primary_key,
+            fields,
         }
     }
 

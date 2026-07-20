@@ -5,9 +5,9 @@ mod error;
 mod field;
 mod table;
 
-pub use error::Error;
-pub use field::SchemaField;
-pub use table::SchemaTable;
+pub use error::*;
+pub use field::*;
+pub use table::*;
 
 use crate::meta::SchemaVersion;
 use serde::{Deserialize, Serialize};
