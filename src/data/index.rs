@@ -13,10 +13,46 @@ Table Index:
 )]
 pub struct TbIndex {
     /// The structure is `(key_field_value, entry_primary_key)`
-    pub normal: HashSet<(ValueKey, ValueKey)>,
+    normal: HashSet<(ValueKey, ValueKey)>,
 
     /// The structure is `<key_field_value, entry_primary_key>`
-    pub unique: HashMap<ValueKey, ValueKey>,
+    unique: HashMap<ValueKey, ValueKey>,
+}
+
+impl TbIndex {
+    pub fn new(
+        normal: impl Into<HashSet<(ValueKey, ValueKey)>>,
+        unique: impl Into<HashMap<ValueKey, ValueKey>>,
+    ) -> Self {
+        Self {
+            normal: normal.into(),
+            unique: unique.into(),
+        }
+    }
+
+    pub fn normal(&self) -> &HashSet<(ValueKey, ValueKey)> {
+        &self.normal
+    }
+
+    pub fn normal_mut(&mut self) -> &mut HashSet<(ValueKey, ValueKey)> {
+        &mut self.normal
+    }
+
+    pub fn set_normal(&mut self, normal: impl Into<HashSet<(ValueKey, ValueKey)>>) {
+        self.normal = normal.into();
+    }
+
+    pub fn unique(&self) -> &HashMap<ValueKey, ValueKey> {
+        &self.unique
+    }
+
+    pub fn unique_mut(&mut self) -> &mut HashMap<ValueKey, ValueKey> {
+        &mut self.unique
+    }
+
+    pub fn set_unique(&mut self, unique: impl Into<HashMap<ValueKey, ValueKey>>) {
+        self.unique = unique.into();
+    }
 }
 
 impl AsRef<Self> for TbIndex {

@@ -52,10 +52,10 @@ pub fn create_indices(db: impl AsRef<Database>, table: impl AsRef<str>) -> Resul
         let mut index = read_index(db, table_name, field_name)?;
 
         // For each entry
-        for p_key in table_mf.entries.iter() {
+        for p_key in table_mf.entries().iter() {
             let entry = read_entry(db, table_name, p_key.clone())?;
 
-            let value = entry.fields.get(field_name).ok_or(anyhow!(
+            let value = entry.fields().get(field_name).ok_or(anyhow!(
                 "entry `{}` has missing field: {}",
                 p_key,
                 field_name
@@ -70,7 +70,7 @@ pub fn create_indices(db: impl AsRef<Database>, table: impl AsRef<str>) -> Resul
 
             match field.key_type() {
                 KeyType::NormalKey => {
-                    index.normal.insert((value, p_key.clone()));
+                    index.normal_mut().insert((value, p_key.clone()));
                 }
                 // Treat primary keys that has passed the previous check
                 // as unique keys.

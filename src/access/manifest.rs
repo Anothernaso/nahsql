@@ -2,16 +2,8 @@
 //! the manifest file of a database.
 
 use super::error::Error;
-use crate::{
-    data::DbManifest,
-    database::{DB_MANIF_FILE_NAME, Database},
-};
-use anyhow::anyhow;
-use std::{fs, path::PathBuf};
-
-fn mf_path(db: &Database) -> PathBuf {
-    db.path().join(DB_MANIF_FILE_NAME)
-}
+use crate::{data::DbManifest, database::Database, meta, path};
+use std::fs;
 
 /// Reads the manifest file of the database synchronously.
 ///
@@ -19,14 +11,15 @@ fn mf_path(db: &Database) -> PathBuf {
 ///
 pub fn read_manifest(db: impl AsRef<Database>) -> Result<DbManifest, Error> {
     let db = db.as_ref();
-    let mf_path = mf_path(db);
+
+    let path = path::db_inst_manif_file_path(db.path());
 
     let mf: DbManifest;
-    if fs::exists(&mf_path)? {
-        let mf_str = fs::read_to_string(mf_path)?;
+    if fs::exists(&path)? {
+        let mf_str = fs::read_to_string(path)?;
         mf = serde_json::from_str(&mf_str)?;
     } else {
-        mf = DbManifest::new(db.schema().version());
+        mf = DbManifest::new(meta::CRATE_VERSION, db.schema().version());
     }
 
     Ok(mf)
@@ -40,12 +33,10 @@ pub fn write_manifest(db: impl AsRef<Database>, mf: impl AsRef<DbManifest>) -> R
     let db = db.as_ref();
     let mf = mf.as_ref();
 
-    let path = mf_path(db);
-    let parent = path
-        .parent()
-        .ok_or(anyhow!("database manifest path has no parent"))?;
+    let parent = db.path();
+    let path = path::db_inst_manif_file_path(parent);
 
-    if !fs::exists(&parent)? {
+    if !fs::exists(parent)? {
         fs::create_dir_all(parent)?;
     }
 

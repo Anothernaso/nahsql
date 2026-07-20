@@ -19,7 +19,27 @@ Table Entry:
 )]
 pub struct TbEntry {
     /// The structure is `<field_name, field_value>`
-    pub fields: HashMap<String, Value>,
+    fields: HashMap<String, Value>,
+}
+
+impl TbEntry {
+    pub fn new(fields: impl Into<HashMap<String, Value>>) -> Self {
+        Self {
+            fields: fields.into(),
+        }
+    }
+
+    pub fn fields(&self) -> &HashMap<String, Value> {
+        &self.fields
+    }
+
+    pub fn fields_mut(&mut self) -> &mut HashMap<String, Value> {
+        &mut self.fields
+    }
+
+    pub fn set_fields(&mut self, fields: impl Into<HashMap<String, Value>>) {
+        self.fields = fields.into();
+    }
 }
 
 impl AsRef<Self> for TbEntry {

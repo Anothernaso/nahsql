@@ -42,8 +42,9 @@ impl Database {
 
         // TODO: verify schema and crate versions
 
-        mf.crate_version = meta::CRATE_VERSION.into();
-        mf.schema_version = db.schema().version();
+        mf.set_crate_version(meta::CRATE_VERSION);
+        mf.set_schema_version(db.schema().version());
+
         write_manifest(&db, &mf).map_err(|e| Error::AccessError(e))?;
 
         Ok(db)

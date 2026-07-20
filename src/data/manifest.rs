@@ -1,4 +1,4 @@
-use crate::meta::{self, SchemaVersion};
+use crate::meta::SchemaVersion;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
 
@@ -13,18 +13,36 @@ Database Manifest:
     schema_version
 )]
 pub struct DbManifest {
-    pub crate_version: String,
-    pub schema_version: SchemaVersion,
+    crate_version: String,
+    schema_version: SchemaVersion,
 }
 
 impl DbManifest {
-    /// Creates a new database manifest with the `user_version`,
-    /// use the version of the `nahsql` crate as the `factory_version`.
-    pub fn new(schema_version: SchemaVersion) -> Self {
+    pub fn new(crate_version: impl Into<String>, schema_version: impl Into<SchemaVersion>) -> Self {
         Self {
-            crate_version: meta::CRATE_VERSION.into(),
-            schema_version,
+            crate_version: crate_version.into(),
+            schema_version: schema_version.into(),
         }
+    }
+
+    pub fn crate_version(&self) -> &str {
+        &self.crate_version
+    }
+
+    pub fn crate_version_mut(&mut self) -> &mut String {
+        &mut self.crate_version
+    }
+
+    pub fn set_crate_version(&mut self, crate_version: impl Into<String>) {
+        self.crate_version = crate_version.into();
+    }
+
+    pub fn schema_version(&self) -> SchemaVersion {
+        self.schema_version
+    }
+
+    pub fn set_schema_version(&mut self, schema_version: impl Into<SchemaVersion>) {
+        self.schema_version = schema_version.into();
     }
 }
 
