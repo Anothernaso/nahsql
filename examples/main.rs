@@ -37,7 +37,7 @@ fn main() -> anyhow::Result<()> {
                 vec![
                     SchemaField::new("id", KeyType::PrimaryKey, VariantType::U64),
                     SchemaField::new("user_id", KeyType::NormalKey, VariantType::U64),
-                    SchemaField::new("following_id", KeyType::NormalKey, VariantType::U64),
+                    SchemaField::new("followee_id", KeyType::NormalKey, VariantType::U64),
                 ],
             ),
         ],
@@ -75,6 +75,7 @@ fn main() -> anyhow::Result<()> {
         "posts",
         TbEntry::new(HashMap::from([
             ("id".into(), Variant::U64(0)),
+            ("user_id".into(), Variant::U64(1)),
             ("title".into(), Variant::String("How to Eat Mustard".into())),
             (
                 "content".into(),
@@ -112,7 +113,7 @@ fn main() -> anyhow::Result<()> {
         TbEntry::new(HashMap::from([
             ("id".into(), Variant::U64(0)),
             ("user_id".into(), Variant::U64(0)),
-            ("following_id".into(), Variant::U64(1)),
+            ("followee_id".into(), Variant::U64(1)),
         ])),
     )?;
 
