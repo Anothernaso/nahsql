@@ -2,7 +2,7 @@ use crate::meta::SchemaVersion;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Display, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Debug, Display, Clone, Serialize, Deserialize)]
 #[display(
     r#"
 Database Manifest:

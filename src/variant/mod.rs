@@ -5,9 +5,10 @@ pub use key::*;
 pub use r#type::*;
 
 use serde::{Deserialize, Serialize};
+use std::collections::{HashMap, HashSet};
 use strum_macros::Display;
 
-#[derive(Debug, Display, Clone, PartialEq, PartialOrd, Serialize, Deserialize)]
+#[derive(Debug, Display, Clone, Serialize, Deserialize)]
 pub enum Variant {
     String(String),
     Bool(bool),
@@ -29,8 +30,19 @@ pub enum Variant {
     I64(i64),
     I128(i128),
 
+    Vec(Vec<Variant>),
+
     F32(f32),
     F64(f64),
+
+    Option(Option<Box<Variant>>),
+    HashSet(HashSet<KeyVariant>),
+
+    /// WARNING: This variant CAN NOT be serialized
+    /// because most `serde` serializers don't support
+    /// `HashMap`s with non-`String` keys and will cause runtime errors;
+    /// therefore this variant is not supported by the database.
+    HashMap(HashMap<KeyVariant, Variant>),
 }
 
 impl Variant {
@@ -56,8 +68,14 @@ impl Variant {
             Self::I64(_) => VariantType::I64,
             Self::I128(_) => VariantType::I128,
 
+            Self::Vec(_) => VariantType::Vec,
+
             Self::F32(_) => VariantType::F32,
             Self::F64(_) => VariantType::F64,
+
+            Self::Option(_) => VariantType::Option,
+            Self::HashSet(_) => VariantType::HashSet,
+            Self::HashMap(_) => VariantType::HashMap,
         }
     }
 
@@ -83,8 +101,14 @@ impl Variant {
             Variant::I64(value) => Some(KeyVariant::I64(value)),
             Variant::I128(value) => Some(KeyVariant::I128(value)),
 
+            Variant::Vec(_) => None,
+
             Variant::F32(_) => None,
             Variant::F64(_) => None,
+
+            Variant::Option(_) => None,
+            Variant::HashSet(_) => None,
+            Variant::HashMap(_) => None,
         }
     }
 }

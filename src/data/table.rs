@@ -3,7 +3,7 @@ use derive_more::Display;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
-#[derive(Debug, Display, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Display, Default, Clone, Serialize, Deserialize)]
 #[display(
     r#"
 Database Table:

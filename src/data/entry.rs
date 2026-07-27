@@ -9,7 +9,7 @@ use std::collections::HashMap;
 ///
 /// This is meant to be used for serialization.
 ///
-#[derive(Debug, Display, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Display, Default, Clone, Serialize, Deserialize)]
 #[display(
     r#"
 Table Entry:

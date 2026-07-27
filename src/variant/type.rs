@@ -25,8 +25,14 @@ pub enum VariantType {
     I64,
     I128,
 
+    Vec,
+
     F32,
     F64,
+
+    Option,
+    HashSet,
+    HashMap,
 }
 
 impl VariantType {
@@ -52,8 +58,14 @@ impl VariantType {
             VariantType::I64 => true,
             VariantType::I128 => true,
 
+            VariantType::Vec => true,
+
             VariantType::F32 => false,
             VariantType::F64 => false,
+
+            VariantType::Option => false,
+            VariantType::HashSet => false,
+            VariantType::HashMap => false,
         }
     }
 }
