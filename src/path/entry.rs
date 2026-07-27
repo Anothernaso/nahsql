@@ -20,9 +20,7 @@ pub fn entry_inst_dir_path(
     let mut entry_dir_path = entry_dir_path.into();
     let primary_key_value = primary_key_value.into();
 
-    entry_dir_path.push(hex::encode(Sha256::digest(
-        <KeyVariant as Into<Vec<u8>>>::into(primary_key_value),
-    )));
+    entry_dir_path.push(hex::encode(Sha256::digest(primary_key_value.into_bytes())));
 
     entry_dir_path
 }

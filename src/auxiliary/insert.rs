@@ -73,12 +73,10 @@ pub fn insert_entry(
             continue;
         }
 
-        let value = <Variant as Into<Option<KeyVariant>>>::into(value.into()).ok_or(
-            Error::from(anyhow!(
-                "key field does not have key-compatible type: {}",
-                field_name
-            )),
-        )?;
+        let value = value.to_owned().into_key().ok_or(Error::from(anyhow!(
+            "key field does not have key-compatible type: {}",
+            field_name
+        )))?;
 
         let mut index = read_index(db, table_name, field_name)?;
 
