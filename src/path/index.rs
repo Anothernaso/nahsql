@@ -1,4 +1,4 @@
-use crate::database::TB_INDEX_DIR_NAME;
+use crate::database::{ID_INDEX_FILE_NAME_EXT, TB_INDEX_DIR_NAME};
 use sha2::{Digest, Sha256};
 use std::path::PathBuf;
 
@@ -17,7 +17,11 @@ pub fn index_inst_file_path(
     let mut index_dir_path = index_dir_path.into();
     let field_name = field_name.as_ref();
 
-    index_dir_path.push(format!("{}.toml", hex::encode(Sha256::digest(field_name))));
+    index_dir_path.push(format!(
+        "{}.{}",
+        hex::encode(Sha256::digest(field_name)),
+        ID_INDEX_FILE_NAME_EXT
+    ));
 
     index_dir_path
 }

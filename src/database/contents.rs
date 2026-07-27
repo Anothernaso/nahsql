@@ -9,5 +9,9 @@ pub const TB_INDEX_DIR_NAME: &str = "indices";
 pub const TB_ENTRY_DIR_NAME: &str = "entries";
 pub const TB_TABLE_FILE_NAME: &str = "table.toml";
 
+pub const ID_INDEX_FILE_NAME_EXT: &str = "toml";
+
 pub const ET_BLOB_DIR_NAME: &str = "blobs";
 pub const ET_ENTRY_FILE_NAME: &str = "entry.toml";
+
+pub const BL_BLOB_FILE_NAME_EXT: &str = "bin";
