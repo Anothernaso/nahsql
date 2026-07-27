@@ -1,5 +1,6 @@
 # NahSQL
-> **Disclaimer**: NahSQL is in early stages of development and is not currently functional.
+> **Disclaimer**: NahSQL is in early stages of development and is not currently functional. \
+> Examples may be outdated during development.
 
 NahSQL is a simple and purpose-built database inspired by SQLite
 but differs in the way it is queried using a Rust API rather than SQL.
