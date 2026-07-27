@@ -72,3 +72,27 @@ pub fn write_entry(
 
     Ok(())
 }
+
+pub fn remove_entry(
+    db: impl AsRef<Database>,
+    table: impl AsRef<str>,
+    primary_key: impl Into<KeyVariant>,
+) -> Result<(), Error> {
+    let db = db.as_ref();
+    let table = table.as_ref();
+    let primary_key = primary_key.into();
+
+    let path = path::entry_inst_file_path(path::entry_inst_dir_path(
+        path::entry_dir_path(path::table_inst_dir_path(
+            path::table_dir_path(db.path()),
+            table,
+        )),
+        primary_key,
+    ));
+
+    if fs::exists(&path)? {
+        fs::remove_file(path)?;
+    }
+
+    Ok(())
+}

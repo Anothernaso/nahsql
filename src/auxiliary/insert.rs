@@ -114,8 +114,6 @@ pub fn insert_entry(
             // Create missing blobs rather than erroring out
             VariantType::Blob => {
                 et_fields.insert(f_name.into(), Variant::Blob);
-
-                // TODO: Create blob file using `access` module
             }
 
             // Create missing option fields as `None` rather than erroring out
