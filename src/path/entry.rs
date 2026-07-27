@@ -1,6 +1,6 @@
 use crate::{
     database::{ET_ENTRY_FILE_NAME, TB_ENTRY_DIR_NAME},
-    value::ValueKey,
+    variant::KeyVariant,
 };
 use sha2::{Digest, Sha256};
 use std::path::PathBuf;
@@ -15,13 +15,13 @@ pub fn entry_dir_path(table_inst_dir_path: impl Into<PathBuf>) -> PathBuf {
 
 pub fn entry_inst_dir_path(
     entry_dir_path: impl Into<PathBuf>,
-    primary_key_value: impl Into<ValueKey>,
+    primary_key_value: impl Into<KeyVariant>,
 ) -> PathBuf {
     let mut entry_dir_path = entry_dir_path.into();
     let primary_key_value = primary_key_value.into();
 
     entry_dir_path.push(hex::encode(Sha256::digest(
-        <ValueKey as Into<Vec<u8>>>::into(primary_key_value),
+        <KeyVariant as Into<Vec<u8>>>::into(primary_key_value),
     )));
 
     entry_dir_path

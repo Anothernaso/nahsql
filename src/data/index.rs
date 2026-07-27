@@ -1,4 +1,4 @@
-use crate::value::ValueKey;
+use crate::variant::KeyVariant;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -13,29 +13,29 @@ Table Index:
 )]
 pub struct TbIndex {
     /// The structure is `(key_field_value, entry_primary_key)`
-    entries: HashSet<(ValueKey, ValueKey)>,
+    entries: HashSet<(KeyVariant, KeyVariant)>,
 }
 
 impl TbIndex {
-    pub fn new(entries: impl Into<HashSet<(ValueKey, ValueKey)>>) -> Self {
+    pub fn new(entries: impl Into<HashSet<(KeyVariant, KeyVariant)>>) -> Self {
         Self {
             entries: entries.into(),
         }
     }
 
-    pub fn entries(&self) -> &HashSet<(ValueKey, ValueKey)> {
+    pub fn entries(&self) -> &HashSet<(KeyVariant, KeyVariant)> {
         &self.entries
     }
 
-    pub fn entries_mut(&mut self) -> &mut HashSet<(ValueKey, ValueKey)> {
+    pub fn entries_mut(&mut self) -> &mut HashSet<(KeyVariant, KeyVariant)> {
         &mut self.entries
     }
 
-    pub fn get_entries(self) -> HashSet<(ValueKey, ValueKey)> {
+    pub fn get_entries(self) -> HashSet<(KeyVariant, KeyVariant)> {
         self.entries
     }
 
-    pub fn set_entries(&mut self, normal: impl Into<HashSet<(ValueKey, ValueKey)>>) {
+    pub fn set_entries(&mut self, normal: impl Into<HashSet<(KeyVariant, KeyVariant)>>) {
         self.entries = normal.into();
     }
 }

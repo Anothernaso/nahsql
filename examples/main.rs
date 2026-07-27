@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use nahsql::{auxiliary::*, data::TbEntry, database::*, schema::*, value::*};
+use nahsql::{auxiliary::*, data::TbEntry, database::*, schema::*, variant::*};
 
 fn main() -> anyhow::Result<()> {
     let schema = Schema::new(
@@ -9,35 +9,35 @@ fn main() -> anyhow::Result<()> {
             SchemaTable::new(
                 "users",
                 vec![
-                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
-                    SchemaField::new("username", KeyType::NormalKey, ValueType::String),
-                    SchemaField::new("email", KeyType::UniqueKey, ValueType::String),
-                    SchemaField::new("passphrase", KeyType::NonKey, ValueType::String),
+                    SchemaField::new("id", KeyType::PrimaryKey, VariantType::U64),
+                    SchemaField::new("username", KeyType::NormalKey, VariantType::String),
+                    SchemaField::new("email", KeyType::UniqueKey, VariantType::String),
+                    SchemaField::new("passphrase", KeyType::NonKey, VariantType::String),
                 ],
             ),
             SchemaTable::new(
                 "posts",
                 vec![
-                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
-                    SchemaField::new("user_id", KeyType::NormalKey, ValueType::U64),
-                    SchemaField::new("title", KeyType::NonKey, ValueType::String),
-                    SchemaField::new("content", KeyType::NonKey, ValueType::String),
+                    SchemaField::new("id", KeyType::PrimaryKey, VariantType::U64),
+                    SchemaField::new("user_id", KeyType::NormalKey, VariantType::U64),
+                    SchemaField::new("title", KeyType::NonKey, VariantType::String),
+                    SchemaField::new("content", KeyType::NonKey, VariantType::String),
                 ],
             ),
             SchemaTable::new(
                 "likes",
                 vec![
-                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
-                    SchemaField::new("user_id", KeyType::NormalKey, ValueType::U64),
-                    SchemaField::new("post_id", KeyType::NormalKey, ValueType::U64),
+                    SchemaField::new("id", KeyType::PrimaryKey, VariantType::U64),
+                    SchemaField::new("user_id", KeyType::NormalKey, VariantType::U64),
+                    SchemaField::new("post_id", KeyType::NormalKey, VariantType::U64),
                 ],
             ),
             SchemaTable::new(
                 "followings",
                 vec![
-                    SchemaField::new("id", KeyType::PrimaryKey, ValueType::U64),
-                    SchemaField::new("user_id", KeyType::NormalKey, ValueType::U64),
-                    SchemaField::new("following_id", KeyType::NormalKey, ValueType::U64),
+                    SchemaField::new("id", KeyType::PrimaryKey, VariantType::U64),
+                    SchemaField::new("user_id", KeyType::NormalKey, VariantType::U64),
+                    SchemaField::new("following_id", KeyType::NormalKey, VariantType::U64),
                 ],
             ),
         ],
@@ -49,10 +49,10 @@ fn main() -> anyhow::Result<()> {
         &db,
         "users",
         TbEntry::new(HashMap::from([
-            ("id".into(), Value::U64(0)),
-            ("username".into(), Value::String("Anatnaso".into())),
-            ("email".into(), Value::String("antondev@kuthy.com".into())),
-            ("passphrase".into(), Value::String("[REDACTED]".into())),
+            ("id".into(), Variant::U64(0)),
+            ("username".into(), Variant::String("Anatnaso".into())),
+            ("email".into(), Variant::String("antondev@kuthy.com".into())),
+            ("passphrase".into(), Variant::String("[REDACTED]".into())),
         ])),
     )?;
 
@@ -60,12 +60,12 @@ fn main() -> anyhow::Result<()> {
         &db,
         "users",
         TbEntry::new(HashMap::from([
-            ("id".into(), Value::U64(1)),
-            ("username".into(), Value::String("Greger".into())),
-            ("email".into(), Value::String("greger@example.org".into())),
+            ("id".into(), Variant::U64(1)),
+            ("username".into(), Variant::String("Greger".into())),
+            ("email".into(), Variant::String("greger@example.org".into())),
             (
                 "passphrase".into(),
-                Value::String("ilovemustard123!".into()),
+                Variant::String("ilovemustard123!".into()),
             ),
         ])),
     )?;
@@ -74,11 +74,11 @@ fn main() -> anyhow::Result<()> {
         &db,
         "posts",
         TbEntry::new(HashMap::from([
-            ("id".into(), Value::U64(0)),
-            ("title".into(), Value::String("How to Eat Mustard".into())),
+            ("id".into(), Variant::U64(0)),
+            ("title".into(), Variant::String("How to Eat Mustard".into())),
             (
                 "content".into(),
-                Value::String(
+                Variant::String(
                     r#"
 1. Acquire mustard. Resist the temptation to salute it.
 2. Open the container carefully. Mustard has a surprising talent for appearing where you least expect it.
@@ -100,9 +100,9 @@ fn main() -> anyhow::Result<()> {
         &db,
         "likes",
         TbEntry::new(HashMap::from([
-            ("id".into(), Value::U64(0)),
-            ("user_id".into(), Value::U64(0)),
-            ("post_id".into(), Value::U64(0)),
+            ("id".into(), Variant::U64(0)),
+            ("user_id".into(), Variant::U64(0)),
+            ("post_id".into(), Variant::U64(0)),
         ])),
     )?;
 
@@ -110,9 +110,9 @@ fn main() -> anyhow::Result<()> {
         &db,
         "followings",
         TbEntry::new(HashMap::from([
-            ("id".into(), Value::U64(0)),
-            ("user_id".into(), Value::U64(0)),
-            ("following_id".into(), Value::U64(1)),
+            ("id".into(), Variant::U64(0)),
+            ("user_id".into(), Variant::U64(0)),
+            ("following_id".into(), Variant::U64(1)),
         ])),
     )?;
 

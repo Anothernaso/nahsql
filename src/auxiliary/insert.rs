@@ -6,7 +6,7 @@ use crate::{
     data::TbEntry,
     database::Database,
     schema::{Error as SchemaError, KeyType},
-    value::{Value, ValueKey},
+    variant::{KeyVariant, Variant},
 };
 
 pub fn insert_entry(
@@ -39,7 +39,7 @@ pub fn insert_entry(
             p_key_field_name
         )))?;
 
-    let p_key = <Value as Into<Option<ValueKey>>>::into(p_key.into()).ok_or(Error::from(
+    let p_key = <Variant as Into<Option<KeyVariant>>>::into(p_key.into()).ok_or(Error::from(
         SchemaError::from(anyhow!(
             "primary key field does not have key-compatible type: {}",
             p_key_field_name
@@ -73,11 +73,12 @@ pub fn insert_entry(
             continue;
         }
 
-        let value =
-            <Value as Into<Option<ValueKey>>>::into(value.into()).ok_or(Error::from(anyhow!(
+        let value = <Variant as Into<Option<KeyVariant>>>::into(value.into()).ok_or(
+            Error::from(anyhow!(
                 "key field does not have key-compatible type: {}",
                 field_name
-            )))?;
+            )),
+        )?;
 
         let mut index = read_index(db, table_name, field_name)?;
 

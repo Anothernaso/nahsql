@@ -1,4 +1,4 @@
-use crate::value::ValueType;
+use crate::variant::VariantType;
 use derive_more::Display as MoreDisplay;
 use serde::{Deserialize, Serialize};
 use strum_macros::Display as StrumDisplay;
@@ -52,7 +52,7 @@ Schema Field:
 pub struct SchemaField {
     pub(super) name: String,
     pub(super) key_type: KeyType,
-    pub(super) value_type: ValueType,
+    pub(super) value_type: VariantType,
 }
 
 impl SchemaField {
@@ -67,7 +67,7 @@ impl SchemaField {
     pub fn new(
         name: impl Into<String>,
         key_type: impl Into<KeyType>,
-        value_type: impl Into<ValueType>,
+        value_type: impl Into<VariantType>,
     ) -> Self {
         Self {
             name: name.into(),
@@ -84,7 +84,7 @@ impl SchemaField {
         self.key_type
     }
 
-    pub fn value_type(&self) -> ValueType {
+    pub fn value_type(&self) -> VariantType {
         self.value_type
     }
 }

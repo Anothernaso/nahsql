@@ -5,7 +5,7 @@ use crate::{
     auxiliary::Error,
     database::Database,
     schema::{Error as SchemaError, KeyType},
-    value::{Value, ValueKey},
+    variant::{KeyVariant, Variant},
 };
 
 /// Creates indices for all fields of the given table in the database.
@@ -62,7 +62,7 @@ pub fn create_indices(db: impl AsRef<Database>, table: impl AsRef<str>) -> Resul
                 field_name
             ))?;
 
-            let value = <Value as Into<Option<ValueKey>>>::into(value.clone()).ok_or(anyhow!(
+            let value = <Variant as Into<Option<KeyVariant>>>::into(value.clone()).ok_or(anyhow!(
                 "field `{}` of entry `{}` has non-key value type: {}",
                 field_name,
                 p_key,

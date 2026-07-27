@@ -1,4 +1,4 @@
-use crate::value::ValueKey;
+use crate::variant::KeyVariant;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -13,29 +13,29 @@ Database Table:
 )]
 pub struct DbTable {
     /// List of all primary keys in the table
-    entries: HashSet<ValueKey>,
+    entries: HashSet<KeyVariant>,
 }
 
 impl DbTable {
-    pub fn new(entries: impl Into<HashSet<ValueKey>>) -> Self {
+    pub fn new(entries: impl Into<HashSet<KeyVariant>>) -> Self {
         Self {
             entries: entries.into(),
         }
     }
 
-    pub fn entries(&self) -> &HashSet<ValueKey> {
+    pub fn entries(&self) -> &HashSet<KeyVariant> {
         &self.entries
     }
 
-    pub fn entries_mut(&mut self) -> &mut HashSet<ValueKey> {
+    pub fn entries_mut(&mut self) -> &mut HashSet<KeyVariant> {
         &mut self.entries
     }
 
-    pub fn get_entries(self) -> HashSet<ValueKey> {
+    pub fn get_entries(self) -> HashSet<KeyVariant> {
         self.entries
     }
 
-    pub fn set_entries(&mut self, entries: impl Into<HashSet<ValueKey>>) {
+    pub fn set_entries(&mut self, entries: impl Into<HashSet<KeyVariant>>) {
         self.entries = entries.into();
     }
 }

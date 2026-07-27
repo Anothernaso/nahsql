@@ -3,14 +3,14 @@ use crate::{
     data::TbEntry,
     database::Database,
     path::{self},
-    value::ValueKey,
+    variant::KeyVariant,
 };
 use std::fs;
 
 pub fn read_entry(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
-    primary_key: impl Into<ValueKey>,
+    primary_key: impl Into<KeyVariant>,
 ) -> Result<TbEntry, Error> {
     let db = db.as_ref();
     let table = table.as_ref();
@@ -39,7 +39,7 @@ pub fn read_entry(
 pub fn write_entry(
     db: impl AsRef<Database>,
     table: impl AsRef<str>,
-    primary_key: impl Into<ValueKey>,
+    primary_key: impl Into<KeyVariant>,
     entry: impl AsRef<TbEntry>,
 ) -> Result<(), Error> {
     let db = db.as_ref();

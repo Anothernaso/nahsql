@@ -6,4 +6,4 @@ pub mod meta;
 pub mod path;
 pub mod query;
 pub mod schema;
-pub mod value;
+pub mod variant;

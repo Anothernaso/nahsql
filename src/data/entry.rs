@@ -1,4 +1,4 @@
-use crate::value::Value;
+use crate::variant::Variant;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -19,29 +19,29 @@ Table Entry:
 )]
 pub struct TbEntry {
     /// The structure is `<field_name, field_value>`
-    fields: HashMap<String, Value>,
+    fields: HashMap<String, Variant>,
 }
 
 impl TbEntry {
-    pub fn new(fields: impl Into<HashMap<String, Value>>) -> Self {
+    pub fn new(fields: impl Into<HashMap<String, Variant>>) -> Self {
         Self {
             fields: fields.into(),
         }
     }
 
-    pub fn fields(&self) -> &HashMap<String, Value> {
+    pub fn fields(&self) -> &HashMap<String, Variant> {
         &self.fields
     }
 
-    pub fn fields_mut(&mut self) -> &mut HashMap<String, Value> {
+    pub fn fields_mut(&mut self) -> &mut HashMap<String, Variant> {
         &mut self.fields
     }
 
-    pub fn get_fields(self) -> HashMap<String, Value> {
+    pub fn get_fields(self) -> HashMap<String, Variant> {
         self.fields
     }
 
-    pub fn set_fields(&mut self, fields: impl Into<HashMap<String, Value>>) {
+    pub fn set_fields(&mut self, fields: impl Into<HashMap<String, Variant>>) {
         self.fields = fields.into();
     }
 }

@@ -1,6 +1,6 @@
 //! Errors related to the schema of a database
 
-use crate::value::ValueType;
+use crate::variant::VariantType;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -13,8 +13,8 @@ pub enum Error {
 
     #[error("type mismatch: expected `{expected}`, but got `{given}`")]
     TypeMismatch {
-        expected: ValueType,
-        given: ValueType,
+        expected: VariantType,
+        given: VariantType,
     },
 
     #[error("unknown error: {0}")]
