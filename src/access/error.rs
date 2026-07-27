@@ -8,13 +8,9 @@ pub enum Error {
     #[error("access I/O error: {0}")]
     IoError(#[from] io::Error),
 
-    /// Something went wrong during serialization.
-    #[error("serialization error: {0}")]
-    SerError(#[from] toml::ser::Error),
-
-    /// Something went wrong during deserialization.
-    #[error("deserialization error: {0}")]
-    DeError(#[from] toml::de::Error),
+    /// Something went wrong during serialization/deserialization.
+    #[error("serialization/deserialization error: {0}")]
+    SerError(#[from] serde_json::Error),
 
     /// Something does not match the schema.
     #[error("schema error: {0}")]

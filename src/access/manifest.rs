@@ -3,7 +3,10 @@
 
 use super::error::Error;
 use crate::{data::DbManifest, database::Database, meta, path};
-use std::fs;
+use std::{
+    fs::{self, File},
+    io::{BufReader, BufWriter},
+};
 
 /// Reads the manifest file of the database synchronously.
 ///
@@ -16,8 +19,10 @@ pub fn read_manifest(db: impl AsRef<Database>) -> Result<DbManifest, Error> {
 
     let mf: DbManifest;
     if fs::exists(&path)? {
-        let mf_str = fs::read_to_string(path)?;
-        mf = toml::from_str(&mf_str)?;
+        let file = File::open(path)?;
+        let buf = BufReader::new(file);
+
+        mf = serde_json::from_reader(buf)?;
     } else {
         mf = DbManifest::new(meta::CRATE_VERSION, db.schema().version());
     }
@@ -40,8 +45,10 @@ pub fn write_manifest(db: impl AsRef<Database>, mf: impl AsRef<DbManifest>) -> R
         fs::create_dir_all(parent)?;
     }
 
-    let mf_str = toml::to_string_pretty(mf)?;
-    fs::write(path, &mf_str)?;
+    let file = File::create(path)?;
+    let buf = BufWriter::new(file);
+
+    serde_json::to_writer_pretty(buf, mf)?;
 
     Ok(())
 }

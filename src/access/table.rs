@@ -1,6 +1,7 @@
 use crate::path::{self};
 use crate::{access::Error, data::DbTable, database::Database};
-use std::fs;
+use std::fs::{self, File};
+use std::io::{BufReader, BufWriter};
 
 pub fn read_table_mf(db: impl AsRef<Database>, table: impl AsRef<str>) -> Result<DbTable, Error> {
     let db = db.as_ref();
@@ -14,8 +15,10 @@ pub fn read_table_mf(db: impl AsRef<Database>, table: impl AsRef<str>) -> Result
     let mf: DbTable;
 
     if fs::exists(&path)? {
-        let mf_toml = fs::read_to_string(&path)?;
-        mf = toml::from_str(&mf_toml)?;
+        let file = File::open(path)?;
+        let buf = BufReader::new(file);
+
+        mf = serde_json::from_reader(buf)?;
     } else {
         mf = DbTable::default();
     }
@@ -39,8 +42,10 @@ pub fn write_table_mf(
         fs::create_dir_all(parent)?;
     }
 
-    let mf_str = toml::to_string_pretty(mf)?;
-    fs::write(path, mf_str)?;
+    let file = File::create(path)?;
+    let buf = BufWriter::new(file);
+
+    serde_json::to_writer_pretty(buf, mf)?;
 
     Ok(())
 }
