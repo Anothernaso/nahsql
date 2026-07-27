@@ -1,6 +1,6 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io::Write};
 
-use nahsql::{auxiliary::*, data::TbEntry, database::*, schema::*, variant::*};
+use nahsql::{access::write_blob, auxiliary::*, data::TbEntry, database::*, schema::*, variant::*};
 
 fn main() -> anyhow::Result<()> {
     let schema = Schema::new(
@@ -21,7 +21,7 @@ fn main() -> anyhow::Result<()> {
                     SchemaField::new("id", KeyType::PrimaryKey, VariantType::U64),
                     SchemaField::new("user_id", KeyType::NormalKey, VariantType::U64),
                     SchemaField::new("title", KeyType::NonKey, VariantType::String),
-                    SchemaField::new("content", KeyType::NonKey, VariantType::String),
+                    SchemaField::new("content", KeyType::NonKey, VariantType::Blob),
                 ],
             ),
             SchemaTable::new(
@@ -77,10 +77,12 @@ fn main() -> anyhow::Result<()> {
             ("id".into(), Variant::U64(0)),
             ("user_id".into(), Variant::U64(1)),
             ("title".into(), Variant::String("How to Eat Mustard".into())),
-            (
-                "content".into(),
-                Variant::String(
-                    r#"
+        ])),
+    )?;
+
+    let mut writer = write_blob(&db, "posts", KeyVariant::U64(0), "content")?;
+    writer.write_all(
+        r#"
 1. Acquire mustard. Resist the temptation to salute it.
 2. Open the container carefully. Mustard has a surprising talent for appearing where you least expect it.
 3. Locate food. A hot dog, pretzel, sandwich, or spoon if you're feeling unusually adventurous.
@@ -90,12 +92,10 @@ fn main() -> anyhow::Result<()> {
 7. If your eyes water a little, declare, "Ah yes, the flavor is working."
 8. Repeat until the food, or the mustard, runs out.
 9. Congratulate yourself on another successful encounter with one of humanity's boldest yellow inventions.
-"#
-                    .into(),
-                ),
-            ),
-        ])),
+"#.as_bytes()
     )?;
+
+    writer.flush()?;
 
     insert_entry(
         &db,
